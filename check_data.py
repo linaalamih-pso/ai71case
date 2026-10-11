@@ -93,8 +93,11 @@ def main():
                   < min(x["total"] for x in doubles), "at 4 stars, one family room is cheaper than 2 doubles")
         if t["id"] == 23:
             check(all(x["rooms"] >= 2 for x in trips), "trap: Rome has no room for 3, so every trip needs 2 rooms")
-            check([x for x in fits if x["hotel"]["brand"] == "Hilton"], "a Hilton trip fits the budget")
+            direct = [x for x in fits if x["out"]["stops"] == x["ret"]["stops"] == 0]
+            check([x for x in direct if x["hotel"]["brand"] == "Hilton"], "a Hilton trip with direct flights fits the budget")
+            check([x for x in direct if x["hotel"]["brand"] == "NH"], "the NH (same stars, a bit cheaper) fits too: Hilton breaks the tie")
             check(not [x for x in fits if x["hotel"]["stars"] == 5], "no 5-star trip fits, so 4-star hotels compete")
+            check(not [x for x in direct if x["hotel"]["brand"] == "Marriott"], "the Marriott (4 stars) is over budget")
         if t["id"] == 24:
             check(len(fits) == 1, f"trap: exactly one trip fits ({len(fits)})")
         if t["id"] == 25:

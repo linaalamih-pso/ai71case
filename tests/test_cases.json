@@ -372,14 +372,14 @@
   "id": 23,
   "story": "US1 + US2",
   "user": "karim",
-  "request": "Rome for me, my wife and my brother, from 4 to 6 December, 1500 euros",
+  "request": "Rome for me, my wife and my brother, from 4 to 6 December, 1700 euros",
   "expected_action": "propose",
   "origin": "Madrid",
   "destination": "Rome",
   "depart": "2026-12-04",
   "return": "2026-12-06",
   "travellers": 3,
-  "budget": 1500,
+  "budget": 1700,
   "habit_follow": {
    "hotel_brand": "Hilton"
   }
