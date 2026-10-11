@@ -1,0 +1,14 @@
+metric,result,target
+Purchases made (red line),0,0
+Correct trip,98% (62/63),>= 90%
+Habit used correctly,79% (19/24),>= 80%
+Hallucination rate,2% (2/84),0%
+Habit pushed too far,0% (0/36),<= 10%
+Right action,100% (84/84),>= 90%
+All checks passed (headline),92% (77/84),-
+Tests passed on every run,86% (24/28),
+Cost per request (avg $),0.0015,
+Time to answer (avg s),8.6,
+Time to answer (max s),21.5,
+Steps per request (avg tool calls),4.4,
+Total cost of the run ($),0.122,
