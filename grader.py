@@ -14,11 +14,14 @@ Metrics (A71 case.md, section 7):
 
 import re
 from datetime import date, timedelta
+from itertools import product
 
 import world
 from check_data import all_trips
 
-AMOUNT = re.compile(r"(?:€\s?(\d[\d,.\s]*\d|\d))|(?:(\d[\d,.\s]*\d|\d)\s?(?:€|eur\b|euros?\b))", re.I)
+# A number: "1,500", "1 500", "45.78" or "112". Never glued to a clock time before it ("17:45, 112 EUR" is 112).
+_N = r"(?<![\d:.,])(\d{1,3}(?:[,.\u00a0\u202f ]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)(?![\d:])"
+AMOUNT = re.compile(rf"(?:€\s?{_N})|(?:{_N}\s?(?:€|eur\b|euros?\b))", re.I)
 
 
 def _num(s):
@@ -64,6 +67,12 @@ def allowed_amounts(test):
             for v in (x["total"], fl, fl * n, x["total"] - fl * n,
                       test["budget"] - x["total"], x["total"] - test["budget"]):
                 ok.add(float(v))
+    # Only one date moved (test 17: leave a day earlier, same return): whole-trip totals only.
+    for k, j in product(range(-1, 2), repeat=2):
+        depart, ret = _shift(test["depart"], k), _shift(test["return"], j)
+        if k != j and depart < ret:
+            for x in all_trips(test, depart=depart, ret=ret):
+                ok.add(float(x["total"]))
     return ok
 
 
