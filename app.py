@@ -171,7 +171,8 @@ if result:
     if answer:
         message = answer["message"]
         if language(message) == "ar":  # Arabic reads right to left
-            st.markdown(f'<div dir="rtl">\n\n{message}\n\n</div>', unsafe_allow_html=True)
+            st.markdown('<style>.rtl{text-align:right} .rtl ul,.rtl ol{padding-left:0;padding-right:1.5em}</style>'
+                        f'<div dir="rtl" class="rtl">\n\n{message}\n\n</div>', unsafe_allow_html=True)
         else:
             st.markdown(message)
 
@@ -188,7 +189,7 @@ if result:
                    "Its raw text is shown below.")
         st.markdown(last_text(result["transcript"]) or "_No text._")
 
-    with st.expander(f"How the agent got there: {result['steps']} tool calls"):
+    with st.expander(f"How the agent got there: {len(result['tool_calls'])} steps"):
         for i, c in enumerate(result["tool_calls"], 1):
             st.markdown(f"{i}. {step_label(c)} `{c['tool']}`")
         if result["purchase_attempts"]:
