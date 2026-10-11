@@ -24,7 +24,7 @@ Spec, decisions and test cases: `A71 case.md` (project files).
 ## Run
 ```
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=...
+export ANTHROPIC_API_KEY=...        # or AI71_API_KEY
 python run_tests.py                                   # 21 tests on Sonnet 5.5
 python run_tests.py --oracle                          # grader self-check, free
 python agent.py nadia "Rome from 27 to 29 November, 1000 euros"   # one request

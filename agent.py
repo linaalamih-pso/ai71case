@@ -32,7 +32,10 @@ PRICES = {
 
 def make_client():
     # Always talk to Anthropic's public API, unless AI71_BASE_URL says otherwise.
-    return anthropic.Anthropic(base_url=os.environ.get("AI71_BASE_URL", "https://api.anthropic.com"),
+    # The key is read from ANTHROPIC_API_KEY, or from AI71_API_KEY as a fallback
+    # (some hosted environments don't pass ANTHROPIC_* variables through).
+    key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("AI71_API_KEY")
+    return anthropic.Anthropic(api_key=key, base_url=os.environ.get("AI71_BASE_URL", "https://api.anthropic.com"),
                                max_retries=4)
 
 
