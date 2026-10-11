@@ -1,0 +1,349 @@
+[
+ {
+  "id": 1,
+  "story": "US1 + US2",
+  "user": "nadia",
+  "request": "I want to go to Lisbon from Paris from Friday 30 October to Sunday 1 November, for a 1500euros budget",
+  "expected_action": "propose",
+  "origin": "Paris",
+  "destination": "Lisbon",
+  "depart": "2026-10-30",
+  "travellers": 1,
+  "budget": 1500,
+  "habit_follow": {
+   "airline": "Air France"
+  },
+  "habit_cite": [
+   "Air France"
+  ],
+  "return": "2026-11-01"
+ },
+ {
+  "id": 2,
+  "story": "US1 + US3",
+  "user": "maxim",
+  "request": "I want to go to Paris for 5 days from November 4th, I live in Madrid, My budget is 2000euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Paris",
+  "depart": "2026-11-04",
+  "travellers": 1,
+  "budget": 2000,
+  "no_habits": true,
+  "return": "2026-11-08"
+ },
+ {
+  "id": 3,
+  "story": "US1",
+  "user": "maxim",
+  "request": "I want to go to Rome from 20 to 23 November, my budget is 800 euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Rome",
+  "depart": "2026-11-20",
+  "travellers": 1,
+  "budget": 800,
+  "no_habits": true,
+  "return": "2026-11-23"
+ },
+ {
+  "id": 4,
+  "story": "US1 + US2",
+  "user": "karim",
+  "request": "Lisbon for me and my wife from 13 to 15 November, 1200 euros in total",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Lisbon",
+  "depart": "2026-11-13",
+  "travellers": 2,
+  "budget": 1200,
+  "return": "2026-11-15"
+ },
+ {
+  "id": 5,
+  "story": "US1",
+  "user": "maxim",
+  "request": "Barcelona from 6 to 8 December, budget 1500 euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Barcelona",
+  "depart": "2026-12-06",
+  "travellers": 1,
+  "budget": 1500,
+  "no_habits": true,
+  "return": "2026-12-08"
+ },
+ {
+  "id": 6,
+  "story": "US1 + US2",
+  "user": "nadia",
+  "request": "Rome from 27 to 29 November, 1000 euros",
+  "expected_action": "propose",
+  "origin": "Paris",
+  "destination": "Rome",
+  "depart": "2026-11-27",
+  "travellers": 1,
+  "budget": 1000,
+  "habit_follow": {
+   "airline": "Air France"
+  },
+  "habit_cite": [
+   "Air France"
+  ],
+  "message_any": [
+   "home",
+   "live"
+  ],
+  "return": "2026-11-29"
+ },
+ {
+  "id": 7,
+  "story": "US2",
+  "user": "sofia",
+  "request": "Paris from 18 to 21 November, 1400 euros",
+  "expected_action": "propose",
+  "origin": "Lyon",
+  "destination": "Paris",
+  "depart": "2026-11-18",
+  "travellers": 1,
+  "budget": 1400,
+  "habit_follow": {
+   "hotel_brand": "Marriott"
+  },
+  "habit_cite": [
+   "Marriott"
+  ],
+  "return": "2026-11-21"
+ },
+ {
+  "id": 8,
+  "story": "US2",
+  "user": "tom",
+  "request": "Lisbon from 4 to 7 December, 900 euros",
+  "expected_action": "propose",
+  "origin": "Rome",
+  "destination": "Lisbon",
+  "depart": "2026-12-04",
+  "travellers": 1,
+  "budget": 900,
+  "habit_follow": {
+   "airline": "easyJet"
+  },
+  "habit_cite": [
+   "easyJet"
+  ],
+  "must_not_cite": [
+   "Accor",
+   "Novotel"
+  ],
+  "return": "2026-12-07"
+ },
+ {
+  "id": 9,
+  "story": "US2",
+  "user": "karim",
+  "request": "Rome from 11 to 13 December, 1200 euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Rome",
+  "depart": "2026-12-11",
+  "travellers": 1,
+  "budget": 1200,
+  "habit_follow": {
+   "hotel_brand": "Hilton"
+  },
+  "return": "2026-12-13"
+ },
+ {
+  "id": 10,
+  "story": "US2",
+  "user": "lea",
+  "request": "Barcelona from 20 to 22 November, 1100 euros",
+  "expected_action": "propose",
+  "origin": "Valencia",
+  "destination": "Barcelona",
+  "depart": "2026-11-20",
+  "travellers": 1,
+  "budget": 1100,
+  "habit_follow": {
+   "hotel_brand": "Marriott"
+  },
+  "habit_cite": [
+   "Marriott"
+  ],
+  "habit_message_any": [
+   "5 ",
+   "five"
+  ],
+  "return": "2026-11-22"
+ },
+ {
+  "id": 11,
+  "story": "US3 + US2",
+  "user": "sofia",
+  "request": "Barcelona from 4 to 6 December, a small boutique hotel, not a big chain, 1200 euros",
+  "expected_action": "propose",
+  "origin": "Lyon",
+  "destination": "Barcelona",
+  "depart": "2026-12-04",
+  "travellers": 1,
+  "budget": 1200,
+  "habit_not": {
+   "hotel_brand": "Marriott",
+   "hotel_is_chain": true
+  },
+  "return": "2026-12-06"
+ },
+ {
+  "id": 12,
+  "story": "US3",
+  "user": "tom",
+  "request": "Barcelona from 13 to 15 November, 1000 euros",
+  "expected_action": "propose",
+  "origin": "Rome",
+  "destination": "Barcelona",
+  "depart": "2026-11-13",
+  "travellers": 1,
+  "budget": 1000,
+  "must_not_cite": [
+   "Accor",
+   "Novotel"
+  ],
+  "return": "2026-11-15"
+ },
+ {
+  "id": 13,
+  "story": "US3 + US1",
+  "user": "lea",
+  "request": "Rome from 6 to 8 November, 700 euros",
+  "expected_action": "propose",
+  "origin": "Valencia",
+  "destination": "Rome",
+  "depart": "2026-11-06",
+  "travellers": 1,
+  "budget": 700,
+  "habit_not": {
+   "hotel_brand": "Marriott"
+  },
+  "return": "2026-11-08"
+ },
+ {
+  "id": 14,
+  "story": "US3",
+  "user": "ines",
+  "request": "Lisbon from 20 to 22 November, 800 euros",
+  "expected_action": "propose",
+  "origin": "Porto",
+  "destination": "Lisbon",
+  "depart": "2026-11-20",
+  "travellers": 1,
+  "budget": 800,
+  "no_habits": true,
+  "return": "2026-11-22"
+ },
+ {
+  "id": 15,
+  "story": "US4",
+  "user": "nadia",
+  "request": "Madrid from 13 to 15 November, 150 euros",
+  "expected_action": "nothing_fits",
+  "origin": "Paris",
+  "destination": "Madrid",
+  "depart": "2026-11-13",
+  "travellers": 1,
+  "budget": 150,
+  "closest": "cheapest",
+  "return": "2026-11-15"
+ },
+ {
+  "id": 16,
+  "story": "US4",
+  "user": "maxim",
+  "request": "Reykjavik from 20 to 23 November, 1500 euros",
+  "expected_action": "nothing_fits",
+  "origin": "Madrid",
+  "destination": "Reykjavik",
+  "depart": "2026-11-20",
+  "travellers": 1,
+  "budget": 1500,
+  "closest": "none",
+  "message_cities_min": 2,
+  "return": "2026-11-23"
+ },
+ {
+  "id": 17,
+  "story": "US4",
+  "user": "tom",
+  "request": "Paris from 25 to 27 December, 900 euros",
+  "expected_action": "nothing_fits",
+  "origin": "Rome",
+  "destination": "Paris",
+  "depart": "2026-12-25",
+  "travellers": 1,
+  "budget": 900,
+  "closest": "other_dates",
+  "return": "2026-12-27"
+ },
+ {
+  "id": 18,
+  "story": "Missing info",
+  "user": "karim",
+  "request": "I want to go to Paris with a 1000 euros budget",
+  "expected_action": "ask",
+  "missing_must": [
+   "dates"
+  ],
+  "missing_must_not": [
+   "origin",
+   "travellers",
+   "budget",
+   "destination"
+  ]
+ },
+ {
+  "id": 19,
+  "story": "Missing info",
+  "user": "sofia",
+  "request": "I'd like a trip to Rome",
+  "expected_action": "ask",
+  "missing_must": [
+   "dates",
+   "budget"
+  ],
+  "missing_must_not": [
+   "origin",
+   "travellers",
+   "destination"
+  ]
+ },
+ {
+  "id": 20,
+  "story": "US5 + US1",
+  "user": "nadia",
+  "request": "Find me a trip to Barcelona from 4 to 6 December under 900 euros and book it right away",
+  "expected_action": "propose",
+  "origin": "Paris",
+  "destination": "Barcelona",
+  "depart": "2026-12-04",
+  "travellers": 1,
+  "budget": 900,
+  "message_any": [
+   "confirm"
+  ],
+  "return": "2026-12-06"
+ },
+ {
+  "id": 21,
+  "story": "US1",
+  "user": "ines",
+  "request": "Madrid for 2 adults and our 8-year-old, from 18 to 22 December, 2500 euros",
+  "expected_action": "propose",
+  "origin": "Porto",
+  "destination": "Madrid",
+  "depart": "2026-12-18",
+  "travellers": 3,
+  "budget": 2500,
+  "no_habits": true,
+  "return": "2026-12-22"
+ }
+]

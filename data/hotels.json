@@ -1,0 +1,578 @@
+[
+ {
+  "id": "PAR-H1",
+  "name": "Le Grand Palais Royal",
+  "city": "Paris",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "grand hotel",
+  "stars": 5,
+  "area": "Louvre",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 520,
+    "rooms_left": 3
+   }
+  ]
+ },
+ {
+  "id": "PAR-H2",
+  "name": "Paris Marriott Opera",
+  "city": "Paris",
+  "brand": "Marriott",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Opera",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 300,
+    "rooms_left": 4
+   },
+   {
+    "type": "family",
+    "max_guests": 4,
+    "price_per_night_eur": 470,
+    "rooms_left": 1
+   }
+  ]
+ },
+ {
+  "id": "PAR-H3",
+  "name": "Hilton Paris Bastille",
+  "city": "Paris",
+  "brand": "Hilton",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Bastille",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 245,
+    "rooms_left": 5
+   }
+  ]
+ },
+ {
+  "id": "PAR-H4",
+  "name": "Hotel des Petits Boulevards",
+  "city": "Paris",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "boutique",
+  "stars": 4,
+  "area": "Le Marais",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 230,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "PAR-H5",
+  "name": "Novotel Paris Gare de Lyon",
+  "city": "Paris",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 3,
+  "area": "Gare de Lyon",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 165,
+    "rooms_left": 8
+   },
+   {
+    "type": "family",
+    "max_guests": 4,
+    "price_per_night_eur": 230,
+    "rooms_left": 3
+   }
+  ]
+ },
+ {
+  "id": "PAR-H6",
+  "name": "ibis Paris Montmartre",
+  "city": "Paris",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 2,
+  "area": "Montmartre",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 105,
+    "rooms_left": 10
+   }
+  ]
+ },
+ {
+  "id": "ROM-H1",
+  "name": "Hotel Palazzo Aurelia",
+  "city": "Rome",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "grand hotel",
+  "stars": 5,
+  "area": "Via Veneto",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 560,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "ROM-H2",
+  "name": "Rome Marriott Flora",
+  "city": "Rome",
+  "brand": "Marriott",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Villa Borghese",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 310,
+    "rooms_left": 4
+   }
+  ]
+ },
+ {
+  "id": "ROM-H3",
+  "name": "Hilton Rome Spagna",
+  "city": "Rome",
+  "brand": "Hilton",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Spanish Steps",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 235,
+    "rooms_left": 4
+   }
+  ]
+ },
+ {
+  "id": "ROM-H4",
+  "name": "NH Collection Roma Centro",
+  "city": "Rome",
+  "brand": "NH",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Centro Storico",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 225,
+    "rooms_left": 4
+   }
+  ]
+ },
+ {
+  "id": "ROM-H5",
+  "name": "Casa Trastevere",
+  "city": "Rome",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "boutique",
+  "stars": 3,
+  "area": "Trastevere",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 140,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "ROM-H6",
+  "name": "ibis Roma Termini",
+  "city": "Rome",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 2,
+  "area": "Termini",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 95,
+    "rooms_left": 9
+   }
+  ]
+ },
+ {
+  "id": "BCN-H1",
+  "name": "Hotel Mirador Barcelona",
+  "city": "Barcelona",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "grand hotel",
+  "stars": 5,
+  "area": "Passeig de Gracia",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 430,
+    "rooms_left": 3
+   }
+  ]
+ },
+ {
+  "id": "BCN-H2",
+  "name": "Barcelona Marriott Diagonal",
+  "city": "Barcelona",
+  "brand": "Marriott",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Diagonal",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 230,
+    "rooms_left": 5
+   }
+  ]
+ },
+ {
+  "id": "BCN-H3",
+  "name": "Hilton Barcelona Mar",
+  "city": "Barcelona",
+  "brand": "Hilton",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Barceloneta",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 220,
+    "rooms_left": 5
+   }
+  ]
+ },
+ {
+  "id": "BCN-H4",
+  "name": "Casa Gracia Boutique",
+  "city": "Barcelona",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "boutique",
+  "stars": 4,
+  "area": "Gracia",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 190,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "BCN-H5",
+  "name": "Novotel Barcelona City",
+  "city": "Barcelona",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 3,
+  "area": "Poblenou",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 140,
+    "rooms_left": 6
+   }
+  ]
+ },
+ {
+  "id": "BCN-H6",
+  "name": "ibis Barcelona Centro",
+  "city": "Barcelona",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 2,
+  "area": "Eixample",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 95,
+    "rooms_left": 8
+   }
+  ]
+ },
+ {
+  "id": "LIS-H1",
+  "name": "Palacio Tejo",
+  "city": "Lisbon",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "grand hotel",
+  "stars": 5,
+  "area": "Chiado",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 480,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "LIS-H2",
+  "name": "Lisbon Marriott Parque",
+  "city": "Lisbon",
+  "brand": "Marriott",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Avenidas Novas",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 210,
+    "rooms_left": 5
+   }
+  ]
+ },
+ {
+  "id": "LIS-H3",
+  "name": "Hilton Lisbon Liberdade",
+  "city": "Lisbon",
+  "brand": "Hilton",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Avenida da Liberdade",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 220,
+    "rooms_left": 4
+   }
+  ]
+ },
+ {
+  "id": "LIS-H4",
+  "name": "Casa do Bairro",
+  "city": "Lisbon",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "boutique",
+  "stars": 3,
+  "area": "Alfama",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 150,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "LIS-H5",
+  "name": "Novotel Lisboa",
+  "city": "Lisbon",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 3,
+  "area": "Sete Rios",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 130,
+    "rooms_left": 6
+   }
+  ]
+ },
+ {
+  "id": "LIS-H6",
+  "name": "ibis Lisboa Centro",
+  "city": "Lisbon",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 2,
+  "area": "Saldanha",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 85,
+    "rooms_left": 9
+   }
+  ]
+ },
+ {
+  "id": "MAD-H1",
+  "name": "Gran Hotel Retiro",
+  "city": "Madrid",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "grand hotel",
+  "stars": 5,
+  "area": "Retiro",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 400,
+    "rooms_left": 3
+   },
+   {
+    "type": "family",
+    "max_guests": 4,
+    "price_per_night_eur": 650,
+    "rooms_left": 1
+   }
+  ]
+ },
+ {
+  "id": "MAD-H2",
+  "name": "Madrid Marriott Castellana",
+  "city": "Madrid",
+  "brand": "Marriott",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Castellana",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 200,
+    "rooms_left": 5
+   },
+   {
+    "type": "family",
+    "max_guests": 4,
+    "price_per_night_eur": 320,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "MAD-H3",
+  "name": "Hilton Madrid Gran Via",
+  "city": "Madrid",
+  "brand": "Hilton",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Gran Via",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 210,
+    "rooms_left": 4
+   }
+  ]
+ },
+ {
+  "id": "MAD-H4",
+  "name": "NH Collection Madrid Sol",
+  "city": "Madrid",
+  "brand": "NH",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 4,
+  "area": "Sol",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 190,
+    "rooms_left": 4
+   },
+   {
+    "type": "family",
+    "max_guests": 4,
+    "price_per_night_eur": 290,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "MAD-H5",
+  "name": "Hostal Lavapies",
+  "city": "Madrid",
+  "brand": "Independent",
+  "is_chain": false,
+  "style": "boutique",
+  "stars": 3,
+  "area": "Lavapies",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 120,
+    "rooms_left": 2
+   }
+  ]
+ },
+ {
+  "id": "MAD-H6",
+  "name": "ibis Madrid Centro",
+  "city": "Madrid",
+  "brand": "Accor",
+  "is_chain": true,
+  "style": "chain",
+  "stars": 2,
+  "area": "Centro",
+  "rooms": [
+   {
+    "type": "double",
+    "max_guests": 2,
+    "price_per_night_eur": 90,
+    "rooms_left": 9
+   },
+   {
+    "type": "family",
+    "max_guests": 3,
+    "price_per_night_eur": 140,
+    "rooms_left": 3
+   }
+  ]
+ }
+]

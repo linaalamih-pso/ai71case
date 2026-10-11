@@ -1,0 +1,168 @@
+{
+ "nadia": {
+  "name": "Nadia",
+  "home_city": "Paris",
+  "card_payments": [
+   {
+    "date": "2025-11-14",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 312.4
+   },
+   {
+    "date": "2026-03-02",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 268.1
+   },
+   {
+    "date": "2026-07-19",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 401.0
+   },
+   {
+    "date": "2025-06-08",
+    "merchant": "HILTON LONDON TOWER BRIDGE",
+    "category": "hotel",
+    "amount_eur": 486.0
+   },
+   {
+    "date": "2026-03-05",
+    "merchant": "HILTON BRUSSELS GRAND PLACE",
+    "category": "hotel",
+    "amount_eur": 352.5
+   }
+  ]
+ },
+ "maxim": {
+  "name": "Maxim",
+  "home_city": "Madrid",
+  "card_payments": []
+ },
+ "karim": {
+  "name": "Karim",
+  "home_city": "Madrid",
+  "card_payments": [
+   {
+    "date": "2025-02-21",
+    "merchant": "HILTON AMSTERDAM",
+    "category": "hotel",
+    "amount_eur": 410.0
+   },
+   {
+    "date": "2026-05-09",
+    "merchant": "HILTON MILAN",
+    "category": "hotel",
+    "amount_eur": 295.8
+   }
+  ]
+ },
+ "sofia": {
+  "name": "Sofia",
+  "home_city": "Lyon",
+  "card_payments": [
+   {
+    "date": "2024-12-03",
+    "merchant": "MARRIOTT VIENNA",
+    "category": "hotel",
+    "amount_eur": 380.0
+   },
+   {
+    "date": "2025-04-18",
+    "merchant": "MARRIOTT BERLIN",
+    "category": "hotel",
+    "amount_eur": 455.2
+   },
+   {
+    "date": "2025-09-27",
+    "merchant": "COURTYARD BY MARRIOTT GENEVA",
+    "category": "hotel",
+    "amount_eur": 298.0
+   },
+   {
+    "date": "2026-06-12",
+    "merchant": "MARRIOTT AMSTERDAM",
+    "category": "hotel",
+    "amount_eur": 520.0
+   },
+   {
+    "date": "2026-02-14",
+    "merchant": "IBERIA",
+    "category": "airline",
+    "amount_eur": 245.6
+   }
+  ]
+ },
+ "tom": {
+  "name": "Tom",
+  "home_city": "Rome",
+  "card_payments": [
+   {
+    "date": "2025-12-20",
+    "merchant": "EASYJET",
+    "category": "airline",
+    "amount_eur": 142.0
+   },
+   {
+    "date": "2026-04-03",
+    "merchant": "EASYJET",
+    "category": "airline",
+    "amount_eur": 118.5
+   },
+   {
+    "date": "2026-08-28",
+    "merchant": "EASYJET",
+    "category": "airline",
+    "amount_eur": 176.3
+   },
+   {
+    "date": "2025-09-15",
+    "merchant": "ACCOR - NOVOTEL MILANO",
+    "category": "hotel",
+    "amount_eur": 189.0
+   }
+  ]
+ },
+ "lea": {
+  "name": "Léa",
+  "home_city": "Valencia",
+  "card_payments": [
+   {
+    "date": "2024-11-22",
+    "merchant": "MARRIOTT LONDON",
+    "category": "hotel",
+    "amount_eur": 610.0
+   },
+   {
+    "date": "2025-03-08",
+    "merchant": "MARRIOTT PARIS",
+    "category": "hotel",
+    "amount_eur": 455.0
+   },
+   {
+    "date": "2025-07-30",
+    "merchant": "MARRIOTT NICE",
+    "category": "hotel",
+    "amount_eur": 390.0
+   },
+   {
+    "date": "2026-01-17",
+    "merchant": "MARRIOTT MUNICH",
+    "category": "hotel",
+    "amount_eur": 342.0
+   },
+   {
+    "date": "2026-07-05",
+    "merchant": "MARRIOTT ATHENS",
+    "category": "hotel",
+    "amount_eur": 498.0
+   }
+  ]
+ },
+ "ines": {
+  "name": "Inès",
+  "home_city": "Porto",
+  "card_payments": []
+ }
+}
