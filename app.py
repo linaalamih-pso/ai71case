@@ -122,9 +122,35 @@ with st.sidebar:
 
 # --- Main page -----------------------------------------------------------------
 st.title("✈️ Travel agent")
-st.write("Ask for a trip as a bank customer would. The agent searches flights and hotels, "
-         "checks your budget, uses your card history as a hint, and proposes a trip. "
-         "It never books. Any language works.")
+with st.expander("About this prototype", expanded=True):
+    st.markdown(f"""
+A prototype of a travel assistant for a digital bank. Ask for a trip as a customer would:
+the agent searches flights and hotels, checks the budget, uses the customer's card history as a hint,
+and proposes one trip. **It never books.** Any language works.
+
+**Small, made-up data set.** Hotels in {", ".join(world.HOTEL_CITIES)}.
+Flights between these cities, plus {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}.
+Trips from 20 October 2026 to 10 January 2027 ("today" is 11 October 2026).
+
+**Pick a customer** in the left panel (on a phone, tap the arrow at the top left),
+or choose "Me: create my profile" there to set your own city, airline and hotel brand.
+Limit: {MAX_REQUESTS} requests per visit.
+""")
+
+with st.expander("Who to test with"):
+    st.markdown("""
+Each customer has past card payments that the agent uses as a soft preference. An explicit request always wins.
+
+| Customer | Lives in | Card history | Good to test |
+|---|---|---|---|
+| Nadia | Paris | Air France often, 2 Hilton stays | Airline habit, hotel tie-break |
+| Hugo | Paris | Air France and easyJet, Hilton and Marriott | Two habits competing |
+| Tom | Rome | easyJet often | Airline habit |
+| Sofia | Lyon | Marriott often | Hotel habit |
+| Léa | Valencia | Marriott often | Hotel habit |
+| Karim | Madrid | 2 Hilton stays | Hotel tie-break only |
+| Maxim, Inès | Madrid, Porto | None | No habits |
+""")
 
 with st.expander("Example requests"):
     for uid, text in EXAMPLES:
