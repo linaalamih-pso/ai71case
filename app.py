@@ -8,6 +8,7 @@ Hosted on Streamlit Community Cloud. Two private settings ("secrets"):
 The page runs the frozen final version: Haiku 5.5 + prompt v2.
 """
 
+import base64
 import os
 import re
 import unicodedata
@@ -213,6 +214,21 @@ def nice_date(iso):
     return f"{d:%a} {d.day} {d:%b}"
 
 
+COUNTRY = {"Barcelona": "es", "Madrid": "es", "Valencia": "es", "Lisbon": "pt", "Porto": "pt",
+           "Paris": "fr", "Lyon": "fr", "Rome": "it"}
+VISUAL = os.environ.get("PAGE_VISUAL", "flag")  # preview switch: "flag" or "photo"
+
+
+def flag(city, height=22):
+    """The country flag as an inline image (flag-icons, MIT). Emoji flags don't show on Windows."""
+    code = COUNTRY.get(city)
+    if not code:
+        return ""
+    svg = base64.b64encode(open(f"assets/flags/{code}.svg", "rb").read()).decode()
+    return (f'<img src="data:image/svg+xml;base64,{svg}" height="{height}" '
+            'style="vertical-align:middle;border-radius:3px;box-shadow:0 0 0 1px #0002;margin-right:8px">')
+
+
 def trip_card(trip, action, habits, budget):
     """The trip as a card, rebuilt from the data (not from the agent's text)."""
     out = world.FLIGHTS_BY_ID.get(trip.get("outbound_flight_id"))
@@ -225,7 +241,14 @@ def trip_card(trip, action, habits, budget):
     with st.container(border=True):
         st.caption("PROPOSED TRIP" if action == "propose" else "CLOSEST OPTION (DOES NOT FIT)")
         if out:
-            st.subheader(f"{out['origin']} → {out['destination']}")
+            photo = f"assets/cities/{out['destination']}.jpg"
+            if VISUAL == "photo" and os.path.exists(photo):
+                st.image(photo, use_container_width=True)
+            if VISUAL == "flag":
+                st.markdown(f"<h3>{flag(out['destination'])}{out['origin']} → {out['destination']}</h3>",
+                            unsafe_allow_html=True)
+            else:
+                st.subheader(f"{out['origin']} → {out['destination']}")
         flights = st.columns(2)
         for col, label, f in ((flights[0], "Departure", out), (flights[1], "Return", ret)):
             if f:
