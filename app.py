@@ -124,19 +124,22 @@ with st.sidebar:
 st.title("✈️ Travel agent")
 with st.expander("About this prototype", expanded=True):
     st.markdown(f"""
-This is a prototype of a travel assistant for a digital bank. Ask for a trip as a customer would.
-The agent searches flights and hotels, checks the budget, uses the customer's card history as a hint,
+A prototype of a travel assistant for a digital bank. Ask for a trip as a customer would:
+the agent searches flights and hotels, checks the budget, uses the customer's card history as a hint,
 and proposes one trip. **It never books.** Any language works.
 
-**It runs on a small, made-up data set.**
-- **Hotels** in {len(world.HOTEL_CITIES)} cities: {", ".join(world.HOTEL_CITIES)}.
-- **Flights** between these cities, plus {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}.
-- **Dates:** trips from 20 October 2026 to 10 January 2027. "Today" is 11 October 2026.
+**Small, made-up data set.** Hotels in {", ".join(world.HOTEL_CITIES)}.
+Flights between these cities, plus {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}.
+Trips from 20 October 2026 to 10 January 2027 ("today" is 11 October 2026).
 
-A request outside this (another city, other dates) gets an answer saying it is not covered.
+**Pick a customer** in the left panel (on a phone, tap the arrow at the top left),
+or choose "Me: create my profile" there to set your own city, airline and hotel brand.
+Limit: {MAX_REQUESTS} requests per visit.
+""")
 
-**Pick a customer** in the left panel (on a phone, tap the arrow at the top left).
-Each one has past card payments that the agent uses as a soft preference. An explicit request always wins.
+with st.expander("Who to test with"):
+    st.markdown("""
+Each customer has past card payments that the agent uses as a soft preference. An explicit request always wins.
 
 | Customer | Lives in | Card history | Good to test |
 |---|---|---|---|
@@ -147,11 +150,6 @@ Each one has past card payments that the agent uses as a soft preference. An exp
 | Léa | Valencia | Marriott often | Hotel habit |
 | Karim | Madrid | 2 Hilton stays | Hotel tie-break only |
 | Maxim, Inès | Madrid, Porto | None | No habits |
-
-**Or create your own customer.** Choose "Me: create my profile" at the top of the customer list,
-then set your city, the airline you fly and the hotel brand you use. The page turns this into fake card payments.
-
-Limits: {MAX_REQUESTS} requests per visit, about 10 seconds per answer.
 """)
 
 with st.expander("Example requests"):
