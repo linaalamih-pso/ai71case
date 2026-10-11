@@ -12,11 +12,12 @@ from check_data import all_trips
 # The same perfect answer, in the customer's language (tests 38-43).
 LOCAL = {
     "fr": "Voici votre voyage pour {total} €, dans votre budget de {budget} €. Vous prenez souvent {names}, donc "
-          "je l'ai choisi. Rien n'est réservé tant que vous ne confirmez pas.",
-    "es": "Aquí está su viaje por {total} €, dentro de su presupuesto de {budget} €. Nada está reservado hasta "
-          "que usted lo confirme.",
+          "je l'ai choisi. Il vous reste {left} € : je peux proposer un meilleur hôtel. Vous pouvez le réserver "
+          "vous-même quand vous voulez.",
+    "es": "Aquí está su viaje por {total} €, dentro de su presupuesto de {budget} €. Le quedan {left} €: puedo "
+          "proponer un hotel mejor. Puede reservarlo usted mismo cuando quiera.",
     "ar": "هذه رحلتك بسعر {total} يورو، ضمن ميزانيتك البالغة {budget} يورو. أنت تسافر كثيراً مع {names}، لذلك "
-          "اخترتها. لم يتم حجز أي شيء حتى تؤكد.",
+          "اخترتها. يتبقى لك {left} يورو، ويمكنني اقتراح فندق أفضل. يمكنك حجزها بنفسك متى شئت.",
 }
 
 
@@ -34,6 +35,16 @@ def _pick(test, trips):
     from grader import check_trip
     fits = [x for x in fits if not check_trip(test, _trip(test, x))[1]]  # meets every "must be true"
     return min(fits, key=lambda x: x["total"])
+
+
+def _left(test, total):
+    """The budget sentence the quality rules ask for (75% / 90% thresholds)."""
+    left = test["budget"] - total
+    if total < 0.75 * test["budget"]:
+        return f"You still have €{left} left, so I can suggest a better hotel if you like. "
+    if total < 0.9 * test["budget"]:
+        return f"That leaves €{left} of your budget. "
+    return ""
 
 
 def _trip(test, x):
@@ -70,9 +81,13 @@ def answer(test):
     msg = (f"Here is your trip for €{x['total']}, within your €{test['budget']} budget. "
            + (f"You often use {names} (5 times), so I picked it. " if habits else "")
            + "".join(f"You also often use {w}. " for w in test.get("habit_message_all", []))
-           + "I used your home city as the origin. Nothing is booked until you confirm.")
+           + _left(test, x["total"])
+           + ("" if test["origin"].lower() in test["request"].lower()
+              else f"You leave from your home city, {test['origin']}. ")
+           + "You can book it yourself whenever you're ready.")
     if test.get("language") in LOCAL:
-        msg = LOCAL[test["language"]].format(total=x["total"], budget=test["budget"], names=names or "-")
+        msg = LOCAL[test["language"]].format(total=x["total"], budget=test["budget"], names=names or "-",
+                                             left=test["budget"] - x["total"])
     return {"action": "propose", "trip": _trip(test, x), "habits_used": habits, "missing_info": [], "message": msg}
 
 

@@ -3,6 +3,7 @@
     python run_tests.py                       # all 21 tests on Sonnet 5.5
     python run_tests.py --tests 1 4 21        # only some tests
     python run_tests.py --repeat 3            # run every test 3 times (the AI can answer differently each time)
+    python run_tests.py --prompt v2           # variation 1: the improved answer instructions
     python run_tests.py --model claude-opus-5-5 --label opus
     python run_tests.py --oracle              # check the grader with perfect answers (no AI, free)
     python run_tests.py --regrade results/<run>   # re-score a past run's answers with the current grader (no AI, free)
@@ -16,6 +17,7 @@ Outputs, in results/<label>_<date-time>/:
 import argparse
 import csv
 import json
+import re
 import statistics
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -34,6 +36,7 @@ TARGETS = {  # A71 case.md, section 7
     "Hallucination rate": "0%",
     "Habit pushed too far": "<= 10%",
     "Right action": ">= 90%",
+    "Answer quality": ">= 90%",
     "All checks passed (headline)": "-",
 }
 
@@ -67,6 +70,7 @@ def main():
     ap.add_argument("--tests", type=int, nargs="*")
     ap.add_argument("--workers", type=int, default=5)
     ap.add_argument("--repeat", type=int, default=1, help="run every test this many times")
+    ap.add_argument("--prompt", default="v1", help="v1 = baseline instructions, v2 = variation 1 (better answers)")
     ap.add_argument("--effort", default=None, help="low / medium / high / xhigh / max (default: the model's default)")
     ap.add_argument("--oracle", action="store_true")
     ap.add_argument("--regrade", default=None, help="folder of a past run: re-score its saved answers")
@@ -96,11 +100,13 @@ def main():
             return oracle.run(t)
     else:
         from agent import make_client, run_agent
+        from prompt import PROMPTS
         client = make_client()
 
         def run_one(t, run):
             try:
-                return run_agent(t["user"], t["request"], model=args.model, effort=args.effort, client=client)
+                return run_agent(t["user"], t["request"], model=args.model, effort=args.effort, client=client,
+                                 system_prompt=PROMPTS[args.prompt])
             except Exception as e:  # keep going; a crashed test counts as failed
                 return {"answer": None, "stop": f"error: {e}", "tool_calls": [], "steps": 0, "purchase_attempts": 0,
                         "usage": {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0},
@@ -121,6 +127,7 @@ def main():
                 "all_passed": grader.all_passed(m),
                 "purchases": m["purchases"], "correct_trip": m["correct_trip"], "habit_correct": m["habit_correct"],
                 "hallucination": m["hallucination"], "habit_pushed": m["habit_pushed"], "right_action": m["right_action"],
+                "quality": m["quality"], "quality_issues": "; ".join(m.get("quality_issues", [])),
                 "notes": "; ".join(notes),
                 "trip": describe_trip(a.get("trip")),
                 "habits_used": "; ".join(f"{h.get('name')}: {h.get('reason')}" for h in a.get("habits_used", [])),
@@ -147,6 +154,7 @@ def main():
         ("Hallucination rate", pct(col("hallucination"))[0]),
         ("Habit pushed too far", pct(col("habit_pushed"))[0]),
         ("Right action", pct(col("right_action"))[0]),
+        ("Answer quality", pct(col("quality"))[0]),
         ("All checks passed (headline)", pct(col("all_passed"))[0]),
         ("Tests passed on every run", pct([all(r["all_passed"] for r in rows if r["test"] == tid)
                                            for tid in dict.fromkeys(col("test"))])[0]),
@@ -156,6 +164,14 @@ def main():
         ("Steps per request (avg tool calls)", f"{statistics.mean(col('tool_calls')):.1f}"),
         ("Total cost of the run ($)", f"{sum(col('cost_usd')):.3f}"),
     ]
+    # How often each quality problem shows up (a message can have several).
+    kinds = {}
+    for r in rows:
+        for i in filter(None, r["quality_issues"].split("; ")):
+            k = i.split(":")[0] if i.startswith("wrong weekday") else re.sub(r"€\d+|\d+%", "X", i)
+            kinds[k] = kinds.get(k, 0) + 1
+    summary += [(f"  quality: {k}", f"{v}/{len(rows)}") for k, v in sorted(kinds.items(), key=lambda kv: -kv[1])]
+
     with open(out_dir / "summary.csv", "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["metric", "result", "target"])
