@@ -330,7 +330,10 @@
   "travellers": 1,
   "budget": 900,
   "message_any": [
-   "confirm"
+   "confirm",
+   "yourself",
+   "vous-même",
+   "vous même"
   ],
   "return": "2026-12-06"
  },
@@ -548,7 +551,10 @@
    "max_stars": 4
   },
   "message_any": [
-   "confirm"
+   "confirm",
+   "yourself",
+   "vous-même",
+   "vous même"
   ]
  },
  {
@@ -681,7 +687,10 @@
    "max_stars": 4
   },
   "message_any": [
-   "confirm"
+   "confirm",
+   "yourself",
+   "vous-même",
+   "vous même"
   ],
   "language": "fr",
   "translation_of": 32

@@ -27,6 +27,7 @@ pip install -r requirements.txt
 export ANTHROPIC_API_KEY=...        # or AI71_API_KEY
 python run_tests.py                                   # 43 tests on Sonnet 5.5
 python run_tests.py --model claude-haiku-5-5 --label haiku --repeat 3   # Haiku, every test 3 times
+python run_tests.py --model claude-haiku-5-5 --label haiku-v2 --repeat 3 --prompt v2   # variation 1
 python run_tests.py --oracle                          # grader self-check, free
 python agent.py nadia "Rome from 27 to 29 November, 1000 euros"   # one request
 ```

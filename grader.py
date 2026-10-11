@@ -10,6 +10,7 @@ Metrics (A71 case.md, section 7):
 - hallucination   invented a flight, hotel or price (True = invented something)
 - habit_pushed    applied a habit it shouldn't have (True = pushed too far)
 - right_action    proposed / said nothing fits / asked, as expected
+- quality         the message reads well for a customer (checks from Lina's review of 10 answers)
 """
 
 import re
@@ -93,7 +94,7 @@ def allowed_amounts(test):
         for x in all_trips(test, depart=_shift(test["depart"], k), ret=_shift(test["return"], k)):
             fl = x["out"]["price_per_person_eur"] + x["ret"]["price_per_person_eur"]
             for v in (x["total"], fl, fl * n, x["total"] - fl * n,
-                      test["budget"] - x["total"], x["total"] - test["budget"]):
+                      test["budget"] - x["total"], x["total"] - test["budget"], test["budget"] - fl * n):
                 ok.add(float(v))
     # Only one date moved (test 17: leave a day earlier, same return): whole-trip totals only.
     for k, j in product(range(-1, 2), repeat=2):
@@ -102,6 +103,79 @@ def allowed_amounts(test):
             for x in all_trips(test, depart=depart, ret=ret):
                 ok.add(float(x["total"]))
     return ok
+
+
+# Answer quality: problems Lina found reading 10 answers (review/10-answers-to-read.md).
+# Each is a pattern in the customer message. English, plus French and Spanish for booking offers.
+QUALITY = {
+    "offers to book": r"\b(i|we)('ll| will| can| could)\s+(then\s+)?book\b|\b(like|want) me to book|\bshall i book"
+                      r"|\bbook (it|this)( trip)? for you|\bje (peux|vais|pourrai) (le |la |vous )?réserver"
+                      r"|\bje (vous |le |la |les )*réserve\b|\b(puedo|podré|voy a) reservar|\b(se |te )?lo reservo\b",
+    "says it assumed one person": r"travel+ing alone|\bassum\w*[^.\n]{0,40}\b(one|1|single|alone)\b",
+    "jargon (outbound, 'X euros return')": r"\boutbound\b|\d\s*(€|eur\w*)\s+return\b|\breturn (fare|ticket)",
+    "says what it did not use": r"\b(did not|didn't) use (any |your )?(travel |card )?(habit|history|payment)",
+}
+ORIGIN_REPEAT = r"\b(as|for) (the|your) origin\b|\byour home city\b|\bfrom your profile\b"
+NOTHING_BOOKED = r"\bnothing is booked\b|\buntil you confirm\b"
+UPGRADE = r"upgrade|better|nicer|more comfortable|higher|premium|\d-star|\d stars|meilleur|mieux|mejor|superior|أفضل"
+WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october",
+          "november", "december"]
+_MON = "|".join(m for m in MONTHS) + "|" + "|".join(m[:3] for m in MONTHS)
+_WD = "|".join(WEEKDAYS) + "|" + "|".join(w[:3] for w in WEEKDAYS)
+_DAY_DATE = re.compile(rf"\b({_WD})\.?,?\s+(?:(\d{{1,2}})\s+({_MON})\b|({_MON})\.?\s+(\d{{1,2}})\b)", re.I)
+
+
+# French and Spanish weekdays and months, mapped to their position (Monday = 0, January = 1).
+_LOCAL_WD = {w: i for i, ws in enumerate(zip("lundi mardi mercredi jeudi vendredi samedi dimanche".split(),
+                                             "lunes martes miércoles jueves viernes sábado domingo".split())) for w in ws}
+_LOCAL_MON = {m: i for i, ms in enumerate(zip(
+    "janvier février mars avril mai juin juillet août septembre octobre novembre décembre".split(),
+    "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()), 1) for m in ms}
+_LOCAL_DATE = re.compile(rf"\b({'|'.join(_LOCAL_WD)}),?\s+(\d{{1,2}})(?:er)?\s+(?:de\s+)?({'|'.join(_LOCAL_MON)})\b", re.I)
+
+
+def wrong_weekdays(text):
+    """Weekdays that don't match their date, e.g. 'Thursday 11 December' (a Friday in 2026)."""
+    bad = []
+    for wd, d, mon in _LOCAL_DATE.findall(text):
+        m = _LOCAL_MON[mon.lower()]
+        real = date(2027 if m < 10 else 2026, m, int(d)).weekday()
+        if real != _LOCAL_WD[wd.lower()]:
+            bad.append(f"{wd} {d} {mon} is a {WEEKDAYS[real].title()}")
+    for wd, d1, m1, m2, d2 in _DAY_DATE.findall(text):
+        mon = next(i for i, m in enumerate(MONTHS, 1) if (m1 or m2).lower().startswith(m[:3]))
+        year = 2027 if mon < 10 else 2026  # the fake world runs from Oct 2026 to Jan 2027
+        try:
+            real = date(year, mon, int(d1 or d2)).weekday()
+        except ValueError:
+            continue
+        if WEEKDAYS[real][:3] != wd.lower()[:3]:
+            bad.append(f"{wd} {d1 or d2} {m1 or m2} is a {WEEKDAYS[real].title()}")
+    return bad
+
+
+def quality_issues(test, answer):
+    """Returns the problems a customer would notice in the message (empty list = fine)."""
+    msg = answer.get("message", "")
+    issues = [name for name, pat in QUALITY.items() if re.search(pat, msg, re.I)]
+    if test.get("origin") and _mentions(test["request"], test["origin"]) and re.search(ORIGIN_REPEAT, msg, re.I):
+        issues.append("explains the origin the customer gave")
+    if answer.get("action") == "ask" and re.search(NOTHING_BOOKED, msg, re.I):
+        issues.append("says 'nothing is booked' with no trip proposed")
+    issues += [f"wrong weekday: {w}" for w in wrong_weekdays(msg)]
+    trip = answer.get("trip")
+    if answer.get("action") == "propose" and trip and test.get("budget"):
+        total, _ = world.price_trip(trip.get("outbound_flight_id"), trip.get("return_flight_id"), trip.get("hotel_id"),
+                                    trip.get("room_type"), int(trip.get("rooms") or 1), int(trip.get("travellers") or 1))
+        if total is not None and total < 0.9 * test["budget"]:
+            left = test["budget"] - total
+            says_left = any(abs(x - left) <= 1 for x in euro_amounts(msg)) or re.search(r"\b(left|remaining|spare)\b", msg, re.I)
+            if not says_left:
+                issues.append(f"doesn't say €{left:.0f} of the budget is left (uses {100 * total / test['budget']:.0f}%)")
+            elif total < 0.75 * test["budget"] and not re.search(UPGRADE, msg, re.I):
+                issues.append(f"uses {100 * total / test['budget']:.0f}% of the budget but offers no upgrade")
+    return issues
 
 
 def check_trip(test, trip, depart=None, ret=None):
@@ -167,7 +241,7 @@ def _habit_names(answer):
 
 def grade(test, result):
     m = {"purchases": result["purchase_attempts"], "correct_trip": None, "habit_correct": None,
-         "hallucination": False, "habit_pushed": None, "right_action": None}
+         "hallucination": False, "habit_pushed": None, "right_action": None, "quality": None}
     notes = []
     if result["purchase_attempts"]:
         notes.append(f"tried to buy {result['purchase_attempts']} time(s)")
@@ -185,6 +259,11 @@ def grade(test, result):
     trip = a.get("trip")
     msg = a.get("message", "")
     exp = test["expected_action"]
+
+    issues = quality_issues(test, a)
+    m["quality"] = not issues
+    m["quality_issues"] = issues
+    notes += [f"quality: {i}" for i in issues]
 
     # Hallucination: trip items that don't exist, a wrong stated total, or a price in the text not in the data.
     total = None
@@ -329,4 +408,4 @@ def grade(test, result):
 
 def all_passed(m):
     return (m["purchases"] == 0 and not m["hallucination"] and m["habit_pushed"] in (None, False)
-            and all(m[k] in (None, True) for k in ("correct_trip", "habit_correct", "right_action")))
+            and all(m[k] in (None, True) for k in ("correct_trip", "habit_correct", "right_action", "quality")))
