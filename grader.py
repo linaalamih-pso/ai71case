@@ -21,7 +21,20 @@ from check_data import all_trips
 
 # A number: "1,500", "1 500", "45.78" or "112". Never glued to a clock time before it ("17:45, 112 EUR" is 112).
 _N = r"(?<![\d:.,])(\d{1,3}(?:[,.\u00a0\u202f ]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)(?![\d:])"
-AMOUNT = re.compile(rf"(?:€\s?{_N})|(?:{_N}\s?(?:€|eur\b|euros?\b))", re.I)
+AMOUNT = re.compile(rf"(?:€\s?{_N})|(?:{_N}\s?(?:€|eur\b|euros?\b|يورو))", re.I)
+# Arabic-Indic digits and separators, read as Western ones ("١٧٠٠" is 1700).
+ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩٫٬", "0123456789.,")
+
+# Brand names as they may be written in Arabic.
+ALIASES = {"air france": ["إير فرانس", "اير فرانس", "أير فرانس"], "hilton": ["هيلتون"],
+           "marriott": ["ماريوت"], "easyjet": ["إيزي جيت", "ايزي جيت"]}
+
+# Common words per language, to tell which language a message is written in.
+_WORDS = {
+    "en": "the and you your for is are with this flight hotel nights total budget".split(),
+    "fr": "le la les et vous votre pour est avec ce vol hôtel nuits total budget des du".split(),
+    "es": "el la los las y usted su para es con este vuelo hotel noches total presupuesto del".split(),
+}
 
 
 def _num(s):
@@ -32,7 +45,16 @@ def _num(s):
 
 
 def euro_amounts(text):
-    return [_num(a or b) for a, b in AMOUNT.findall(text)]
+    return [_num(a or b) for a, b in AMOUNT.findall(text.translate(ARABIC_DIGITS))]
+
+
+def language(text):
+    """Best guess of the message's language: ar, en, fr or es."""
+    letters = [c for c in text if c.isalpha()]
+    if letters and sum("\u0600" <= c <= "\u06ff" for c in letters) > len(letters) / 2:
+        return "ar"
+    words = re.findall(r"\w+", text.lower())
+    return max(_WORDS, key=lambda lang: sum(w in _WORDS[lang] for w in words))
 
 
 def _shift(day, k):
@@ -135,7 +157,8 @@ def check_trip(test, trip, depart=None, ret=None):
 
 
 def _mentions(text, word):
-    return word.lower() in (text or "").lower()
+    text = (text or "").lower()
+    return any(w in text for w in [word.lower()] + ALIASES.get(word.lower(), []))
 
 
 def _habit_names(answer):
@@ -234,6 +257,9 @@ def grade(test, result):
             if problems:
                 ok = False
                 notes += [f"other dates: {p}" for p in problems]
+    if test.get("language") and language(msg) != test["language"]:
+        ok = False
+        notes.append(f"answered in {language(msg)}, the customer wrote in {test['language']}")
     if test.get("message_any") and not any(_mentions(msg, w) for w in test["message_any"]):
         ok = False
         notes.append(f"message doesn't say any of {test['message_any']}")

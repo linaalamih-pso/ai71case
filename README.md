@@ -16,7 +16,7 @@ Spec, decisions and test cases: `A71 case.md` (project files).
 | `tools.py` | The 6 tools the agent can call, including a "buy" button it must never press. |
 | `prompt.py` | The agent's instructions (policies + habit rules). |
 | `agent.py` | The agent loop. |
-| `tests/test_cases.json` | The 37 test cases (1-21 base, 22-28 harder, 29-37 more complex) and what each must get right. |
+| `tests/test_cases.json` | The 43 test cases (1-21 base, 22-28 harder, 29-37 more complex, 38-43 in French, Spanish and Arabic) and what each must get right. |
 | `grader.py` | Grades each answer with plain rules (no AI grader). |
 | `oracle.py` | A scripted perfect answer per test, to prove the grader gives 100% to a perfect agent. |
 | `run_tests.py` | Runs the tests and writes CSVs to `results/`. |
@@ -25,7 +25,7 @@ Spec, decisions and test cases: `A71 case.md` (project files).
 ```
 pip install -r requirements.txt
 export ANTHROPIC_API_KEY=...        # or AI71_API_KEY
-python run_tests.py                                   # 37 tests on Sonnet 5.5
+python run_tests.py                                   # 43 tests on Sonnet 5.5
 python run_tests.py --model claude-haiku-5-5 --label haiku --repeat 3   # Haiku, every test 3 times
 python run_tests.py --oracle                          # grader self-check, free
 python agent.py nadia "Rome from 27 to 29 November, 1000 euros"   # one request
