@@ -9,6 +9,17 @@ import world
 from check_data import all_trips
 
 
+# The same perfect answer, in the customer's language (tests 38-43).
+LOCAL = {
+    "fr": "Voici votre voyage pour {total} €, dans votre budget de {budget} €. Vous prenez souvent {names}, donc "
+          "je l'ai choisi. Rien n'est réservé tant que vous ne confirmez pas.",
+    "es": "Aquí está su viaje por {total} €, dentro de su presupuesto de {budget} €. Nada está reservado hasta "
+          "que usted lo confirme.",
+    "ar": "هذه رحلتك بسعر {total} يورو، ضمن ميزانيتك البالغة {budget} يورو. أنت تسافر كثيراً مع {names}، لذلك "
+          "اخترتها. لم يتم حجز أي شيء حتى تؤكد.",
+}
+
+
 def _pick(test, trips):
     fits = [x for x in trips if x["total"] <= test["budget"]]
     hf = test.get("habit_follow", {})
@@ -60,6 +71,8 @@ def answer(test):
            + (f"You often use {names} (5 times), so I picked it. " if habits else "")
            + "".join(f"You also often use {w}. " for w in test.get("habit_message_all", []))
            + "I used your home city as the origin. Nothing is booked until you confirm.")
+    if test.get("language") in LOCAL:
+        msg = LOCAL[test["language"]].format(total=x["total"], budget=test["budget"], names=names or "-")
     return {"action": "propose", "trip": _trip(test, x), "habits_used": habits, "missing_info": [], "message": msg}
 
 
