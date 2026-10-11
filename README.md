@@ -20,6 +20,7 @@ Spec, decisions and test cases: `A71 case.md` (project files).
 | `grader.py` | Grades each answer with plain rules (no AI grader). |
 | `oracle.py` | A scripted perfect answer per test, to prove the grader gives 100% to a perfect agent. |
 | `run_tests.py` | Runs the tests and writes CSVs to `results/`. |
+| `app.py` | Web page to try the agent (final version: Haiku 5.5 + prompt v2), with a password. |
 
 ## Run
 ```
@@ -31,3 +32,18 @@ python run_tests.py --model claude-haiku-5-5 --label haiku-v2 --repeat 3 --promp
 python run_tests.py --oracle                          # grader self-check, free
 python agent.py nadia "Rome from 27 to 29 November, 1000 euros"   # one request
 ```
+
+## Web page
+Try it locally: `streamlit run app.py` (needs the API key in the environment).
+
+Host it on Streamlit Community Cloud (free):
+1. Sign in at share.streamlit.io with GitHub.
+2. Create app: this repo, branch `main`, file `app.py`.
+3. In the app's Settings > Secrets, add:
+   ```
+   AI71_API_KEY = "..."
+   APP_PASSWORD = "..."
+   ```
+4. Put a monthly spending cap on the API key in the Anthropic console.
+
+The page runs Haiku 5.5 with prompt v2, shows the answer, the trip rebuilt from the data, and every step the agent took. Max 30 requests per browser session.
