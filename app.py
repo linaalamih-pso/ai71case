@@ -10,6 +10,7 @@ The page runs the frozen final version: Haiku 5.5 + prompt v2.
 
 import os
 import re
+import unicodedata
 import uuid
 from collections import Counter
 from datetime import date, timedelta
@@ -175,6 +176,7 @@ if go:
         st.error("No API key configured.")
         st.stop()
     st.session_state.used = used + 1
+    st.session_state.asked = request
     with st.spinner("The agent is searching... (about 10 seconds)"):
         try:
             st.session_state.result = run_agent(user_id, request, model=MODEL,
@@ -184,26 +186,73 @@ if go:
             st.error(f"Something went wrong: {e}")
 
 
-def trip_lines(trip):
-    """The trip as plain lines, rebuilt from the data (not from the agent's text)."""
+def budget_from(request, travellers=1):
+    """The budget in euros written in the request, or None. Only for the budget bar on the page."""
+    text = "".join(str(unicodedata.digit(c)) if c.isdigit() else c for c in request)  # Arabic digits
+    num = r"(\d+(?:[.,\s ]\d{3})*(?:[.,]\d+)?\s*k?)"
+    cur = r"(?:euros?|eur|€|يورو)"
+    found = re.findall(num + r"\s*" + cur, text, re.I) or re.findall(cur + r"\s*" + num, text, re.I) \
+        or re.findall(r"(\d+(?:[.,]\d+)?\s*k)\b", text, re.I)
+    if not found:
+        return None
+    raw = found[-1].strip().lower()
+    k = raw.endswith("k")
+    raw = raw.rstrip("k").strip()
+    if re.fullmatch(r"\d+[.,]\d{1,2}", raw) and k:
+        value = float(raw.replace(",", "."))
+    else:
+        value = float(re.sub(r"[.,\s ]", "", raw))
+    value *= 1000 if k else 1
+    if re.search(r"\b(each|per person|par personne|chacun|cada uno|por persona)\b", text, re.I):
+        value *= travellers
+    return value
+
+
+def nice_date(iso):
+    d = date.fromisoformat(iso)
+    return f"{d:%a} {d.day} {d:%b}"
+
+
+def trip_card(trip, action, habits, budget):
+    """The trip as a card, rebuilt from the data (not from the agent's text)."""
     out = world.FLIGHTS_BY_ID.get(trip.get("outbound_flight_id"))
     ret = world.FLIGHTS_BY_ID.get(trip.get("return_flight_id"))
     hotel = world.HOTELS_BY_ID.get(trip.get("hotel_id"))
-    lines = []
-    for label, f in (("Departure", out), ("Return", ret)):
-        if f:
-            stops = "direct" if f["stops"] == 0 else f"{f['stops']} stop(s)"
-            lines.append(f"**{label}:** {f['airline']}, {f['origin']} → {f['destination']}, "
-                         f"{f['date']} at {f['departure_time']}, {stops}, €{f['price_per_person_eur']} per person")
-    if hotel:
-        lines.append(f"**Hotel:** {hotel['name']}, {hotel['stars']}★, {hotel['area']}, {trip.get('rooms')} x {trip.get('room_type')}")
+    travellers = trip.get("travellers", 1)
     total, problems = world.price_trip(trip.get("outbound_flight_id"), trip.get("return_flight_id"),
                                        trip.get("hotel_id"), trip.get("room_type"),
-                                       trip.get("rooms", 1), trip.get("travellers", 1))
-    if total is not None:
-        lines.append(f"**Total (checked against the data):** €{total:,.0f} for {trip.get('travellers')} traveller(s)")
-    lines += [f"⚠️ {p}" for p in problems]
-    return lines
+                                       trip.get("rooms", 1), travellers)
+    with st.container(border=True):
+        st.caption("PROPOSED TRIP" if action == "propose" else "CLOSEST OPTION (DOES NOT FIT)")
+        if out:
+            st.subheader(f"{out['origin']} → {out['destination']}")
+        flights = st.columns(2)
+        for col, label, f in ((flights[0], "Departure", out), (flights[1], "Return", ret)):
+            if f:
+                stops = "Direct" if f["stops"] == 0 else f"{f['stops']} stop(s)"
+                col.markdown(f"✈️ **{label}** · {nice_date(f['date'])}  \n"
+                             f"{f['airline']}, {f['departure_time']} · {stops}  \n"
+                             f"€{f['price_per_person_eur']} per person")
+        if hotel:
+            nights = ""
+            if out and ret:
+                n = (date.fromisoformat(ret["date"]) - date.fromisoformat(out["date"])).days
+                nights = f" · {n} night{'s' if n > 1 else ''}"
+            st.markdown(f"🏨 **{hotel['name']}** {'★' * hotel['stars']}  \n"
+                        f"{hotel['area']} · {trip.get('rooms', 1)} × {trip.get('room_type')} room{nights}")
+        if total is not None:
+            st.markdown(f"### €{total:,.0f}")
+            st.caption(f"Total for {travellers} traveller{'s' if travellers > 1 else ''}, checked against the data")
+            if budget:
+                if total <= budget:
+                    st.progress(total / budget, text=f"€{total:,.0f} of your €{budget:,.0f} budget · €{budget - total:,.0f} left")
+                else:
+                    st.progress(1.0, text=f"⚠️ €{total - budget:,.0f} over your €{budget:,.0f} budget")
+        for h in habits:
+            icon = "✈️" if h.get("kind") == "airline" else "🏨"
+            st.markdown(f":blue-badge[{icon} Your habit: {h.get('name')}] {h.get('reason')}")
+        for p in problems:
+            st.warning(p)
 
 
 def step_label(call):
@@ -236,21 +285,15 @@ if result:
     answer = result["answer"]
     st.divider()
     if answer:
+        if answer.get("trip"):  # the card first: the answer at a glance, details in the text below
+            trip_card(answer["trip"], answer["action"], answer.get("habits_used", []),
+                      budget_from(st.session_state.get("asked", ""), answer["trip"].get("travellers", 1)))
         message = answer["message"]
         if language(message) == "ar":  # Arabic reads right to left
             st.markdown('<style>.rtl{text-align:right} .rtl ul,.rtl ol{padding-left:0;padding-right:1.5em}</style>'
                         f'<div dir="rtl" class="rtl">\n\n{message}\n\n</div>', unsafe_allow_html=True)
         else:
             st.markdown(message)
-
-        if answer.get("trip"):
-            label = "Proposed trip" if answer["action"] == "propose" else "Closest option (over budget)"
-            with st.container(border=True):
-                st.caption(label)
-                for line in trip_lines(answer["trip"]):
-                    st.markdown(line)
-        for h in answer.get("habits_used", []):
-            st.caption(f"Habit used: {h.get('name')} ({h.get('reason')})")
     else:
         st.warning("The agent did not send its answer through the answer form (a known issue, about 5% of requests). "
                    "Its raw text is shown below.")
