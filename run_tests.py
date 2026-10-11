@@ -4,6 +4,7 @@
     python run_tests.py --tests 1 4 21        # only some tests
     python run_tests.py --model claude-opus-5-5 --label opus
     python run_tests.py --oracle              # check the grader with perfect answers (no AI, free)
+    python run_tests.py --regrade results/<run>   # re-score a past run's answers with the current grader (no AI, free)
 
 Outputs, in results/<label>_<date-time>/:
 - results.csv      one row per test: answer, pass/fail per metric, notes, cost, time
@@ -66,14 +67,25 @@ def main():
     ap.add_argument("--workers", type=int, default=5)
     ap.add_argument("--effort", default=None, help="low / medium / high / xhigh / max (default: the model's default)")
     ap.add_argument("--oracle", action="store_true")
+    ap.add_argument("--regrade", default=None, help="folder of a past run: re-score its saved answers")
     args = ap.parse_args()
 
     tests = [t for t in TESTS if not args.tests or t["id"] in args.tests]
-    label = args.label or ("oracle" if args.oracle else args.model)
+    if args.regrade:
+        saved = {}
+        for line in open(Path(args.regrade) / "transcripts.jsonl"):
+            x = json.loads(line)
+            saved[x["test"]] = x["result"]
+        tests = [t for t in tests if t["id"] in saved]
+    label = args.label or ("oracle" if args.oracle else
+                           f"{Path(args.regrade).name}_regraded" if args.regrade else args.model)
     out_dir = ROOT / "results" / f"{label}_{datetime.now():%Y%m%d-%H%M%S}"
     out_dir.mkdir(parents=True)
 
-    if args.oracle:
+    if args.regrade:
+        def run_one(t):
+            return saved[t["id"]]
+    elif args.oracle:
         import oracle
         run_one = oracle.run
     else:

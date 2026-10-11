@@ -1,0 +1,284 @@
+test,story,user,request,expected_action,action,all_passed,purchases,correct_trip,habit_correct,hallucination,habit_pushed,right_action,notes,trip,habits_used,missing_info,message,tool_calls,seconds,cost_usd,input_tokens,output_tokens,stop
+1,US1 + US2,nadia,"I want to go to Lisbon from Paris from Friday 30 October to Sunday 1 November, for a 1500euros budget",propose,propose,True,0,True,True,False,,True,,Air France 2026-10-30 / Air France 2026-11-01 / Palacio Tejo (5*) 1x double / stated €1315,Air France: 3 Air France round trips in the last 12 months (strong habit); direct flights on both dates.,,"Hi Nadia, here is a trip that fits your budget.
+
+Assumptions: I used Paris (your home city) as the departure city. I assumed 1 traveller, since you gave no number.
+
+Flights (Air France, direct both ways):
+- Outbound: Fri 30 Oct 2026, Paris to Lisbon, departs 17:15. Price: 179 EUR.
+- Return: Sun 1 Nov 2026, Lisbon to Paris, departs 11:30. Price: 176 EUR.
+- Flights total: 355 EUR.
+
+Hotel: Palacio Tejo, 5 stars, Chiado. Double room, 2 nights (30 Oct to 1 Nov), 480 EUR per night, so 960 EUR.
+
+Total: 1,315 EUR (355 EUR flights + 960 EUR hotel). This is 185 EUR under your 1,500 EUR budget.
+
+Why Air France: you have flown with them 3 times in the last 12 months, so I picked them. Both of their flights are direct.
+
+Nothing is booked yet. Tell me if you want to go ahead and confirm it yourself.",5,8.2,0.0273,8306,1332,submitted
+2,US1 + US3,maxim,"I want to go to Paris for 5 days from November 4th, I live in Madrid, My budget is 2000euros",propose,propose,True,0,True,,False,False,True,,easyJet 2026-11-04 / Iberia 2026-11-08 / Hotel des Petits Boulevards (4*) 1x double / stated €1148,,,"Hi Maxim, here is a trip to Paris that fits your budget.
+
+Assumptions: I used Madrid as your departure city (your home city). I assumed 1 traveller. I read ""5 days from November 4th"" as 4 nights: November 4 to November 8, 2026.
+
+Flights (both direct):
+- Outbound: easyJet, Madrid to Paris, Wed 4 Nov 2026, departs 07:30. Price: 84 EUR.
+- Return: Iberia, Paris to Madrid, Sun 8 Nov 2026, departs 08:30. Price: 144 EUR.
+- Flights total: 228 EUR.
+
+Hotel: Hotel des Petits Boulevards, 4 stars, boutique hotel in Le Marais. Double room, 4 nights at 230 EUR = 920 EUR.
+
+Total: 1,148 EUR (228 EUR flights + 920 EUR hotel). This is 852 EUR under your 2,000 EUR budget.
+
+Why this choice: it has direct flights, and it is the cheapest 4-star hotel. The only 5-star hotel (2,080 EUR for the stay) is over budget on its own. Your card payments show no travel habits, so I did not use any.
+
+Nothing is booked yet. Tell me if you want to go ahead, and you can confirm and book it yourself.",5,8.1,0.0264,8132,1285,submitted
+3,US1,maxim,"I want to go to Rome from 20 to 23 November, my budget is 800 euros",propose,propose,False,0,True,,True,False,True,price(s) in message not found in data: [45112.0],easyJet 2026-11-20 / ITA Airways 2026-11-23 / Casa Trastevere (3*) 1x double / stated €665,,,"Hi Maxim, here is a trip to Rome within your budget.
+
+Assumptions: you didn't say where you fly from or how many people, so I used your home city, Madrid, and 1 traveller. I used 20 to 23 November 2026 (3 nights).
+
+Flights (both direct):
+- Outbound, 20 Nov: easyJet, Madrid to Rome, departs 17:45, 112 EUR.
+- Return, 23 Nov: ITA Airways, Rome to Madrid, departs 15:00, 133 EUR.
+
+Hotel: Casa Trastevere, 3 stars, boutique hotel in Trastevere. Double room for 3 nights at 140 EUR per night, 420 EUR in total.
+
+Total: 665 EUR (flights 245 EUR + hotel 420 EUR). That is 135 EUR under your 800 EUR budget.
+
+The 4-star hotels in Rome for these dates would take the total above 800 EUR, so this is the best-rated hotel that fits. Your card history shows no airline or hotel habits, so none influenced the choice.
+
+Nothing is booked yet. It is only booked once you confirm.",5,9.3,0.0272,12262,1303,submitted
+4,US1 + US2,karim,"Lisbon for me and my wife from 13 to 15 November, 1200 euros in total",propose,propose,False,0,True,,True,,True,"price(s) in message not found in data: [45.78, 45.75]",easyJet 2026-11-13 / easyJet 2026-11-15 / Hilton Lisbon Liberdade (4*) 1x double / stated €746,"Hilton: 2 Hilton stays in the last 24 months (Amsterdam, Milan): medium habit, used to break the tie between the similar 4-star hotels Hilton (440 EUR) and Marriott (420 EUR).",,"Hi Karim, here is a trip for you and your wife. I assumed you fly from Madrid, your home city, and that you are 2 travellers.
+
+Flights (direct, easyJet):
+- Out: Fri 13 Nov 2026, Madrid to Lisbon, departs 15:45. 78 EUR per person.
+- Back: Sun 15 Nov 2026, Lisbon to Madrid, departs 21:45. 75 EUR per person.
+- Flights total for 2: 306 EUR.
+
+Hotel: Hilton Lisbon Liberdade, 4 stars, Avenida da Liberdade. 1 double room for 2 nights (13 to 15 Nov), 220 EUR per night, 440 EUR in total.
+
+Total: 746 EUR (306 flights + 440 hotel). This is within your 1200 EUR budget.
+
+Why this choice: the 5-star Palacio Tejo would cost 1266 EUR with the cheapest flights, which is over budget. Among the 4-star hotels, the Marriott and the Hilton are close in price. You have stayed at Hilton twice recently (Amsterdam and Milan), so I picked the Hilton.
+
+Nothing is booked yet. Tell me if you want to go ahead and you can confirm the booking yourself.",5,10.2,0.0299,12544,1535,submitted
+5,US1,maxim,"Barcelona from 6 to 8 December, budget 1500 euros",propose,propose,False,0,True,,True,False,True,"price(s) in message not found in data: [0.64, 15.51]",easyJet 2026-12-06 / Ryanair 2026-12-08 / Hotel Mirador Barcelona (5*) 1x double / stated €975,,,"Hi Maxim, here is a trip to Barcelona within your budget.
+
+Assumptions: you gave no departure city or number of travellers. I used your home city, Madrid, and 1 traveller.
+
+Dates: 6 to 8 December 2026 (2 nights).
+
+Flights (all direct):
+- Outbound: easyJet, Madrid to Barcelona, 6 Dec, departs 11:00. 64 EUR.
+- Return: Ryanair, Barcelona to Madrid, 8 Dec, departs 19:15. 51 EUR.
+
+Hotel: Hotel Mirador Barcelona, 5 stars, Passeig de Gracia. Double room, 430 EUR per night, 860 EUR for 2 nights.
+
+Total: 975 EUR (flights 115 EUR + hotel 860 EUR). That is 525 EUR under your 1500 EUR budget.
+
+I chose the 5-star hotel because it is the highest-rated option that fits the budget. I took the cheapest direct flights. Your card history shows no airline or hotel habits, so none were used.
+
+Nothing is booked yet. Please confirm if you want to book it.",5,7.9,0.0258,11302,1156,submitted
+6,US1 + US2,nadia,"Rome from 27 to 29 November, 1000 euros",propose,propose,False,0,True,True,True,,True,"price(s) in message not found in data: [15182.0, 45184.0]",Air France 2026-11-27 / Air France 2026-11-29 / Hilton Rome Spagna (4*) 1x double / stated €836,"Air France: 3 round trips in the last 12 months (strong habit); Hilton: 2 stays in the last 24 months (medium habit), used as tie-breaker among similar 4-star hotels within 10% price",,"Hi Nadia, here is a trip to Rome for 27 to 29 November 2026 (2 nights). I assumed you fly from Paris, your home city, and that you travel alone.
+
+Flights (Air France, both direct):
+- Out: Fri 27 Nov, Paris to Rome, departs 19:15. 182 EUR.
+- Back: Sun 29 Nov, Rome to Paris, departs 17:45. 184 EUR.
+
+Hotel: Hilton Rome Spagna, 4 stars, near the Spanish Steps. Double room, 2 nights at 235 EUR = 470 EUR.
+
+Total: 836 EUR (flights 366 EUR + hotel 470 EUR). This is within your 1,000 EUR budget.
+
+Why these choices:
+- You often fly Air France (3 round trips in the last 12 months), so I picked it.
+- You have stayed at Hilton twice. It was priced close to the cheapest 4-star hotel (NH Collection, 450 EUR), so I chose Hilton.
+
+Nothing is booked yet. Tell me if you want to go ahead and you can confirm and book it yourself.",5,9.7,0.0297,11781,1483,submitted
+7,US2,sofia,"Paris from 18 to 21 November, 1400 euros",propose,propose,True,0,True,True,False,,True,,easyJet 2026-11-18 / Ryanair 2026-11-21 / Paris Marriott Opera (4*) 1x double / stated €1021,"Marriott: 4 Marriott stays in the last 24 months (Vienna, Berlin, Geneva, Amsterdam), a strong habit; the Paris Marriott Opera fits the budget.",,"Hi Sofia, here is a trip to Paris for 18 to 21 November 2026 (3 nights).
+
+Assumptions: you didn't say where you leave from or how many people travel. I used your home city, Lyon, and 1 traveller.
+
+Flights (all direct):
+- Outbound: easyJet, Wed 18 Nov 2026, Lyon to Paris, departs 08:15. Price: 66 €.
+- Return: Ryanair, Sat 21 Nov 2026, Paris to Lyon, departs 17:30. Price: 55 €.
+- Flights total: 121 €.
+
+Hotel: Paris Marriott Opera (4 stars, Opera area), double room, 3 nights at 300 € = 900 €.
+
+Total: 1,021 €. That is 121 € for flights plus 900 € for the hotel. It is within your 1,400 € budget.
+
+Why this hotel: you often stay at Marriott (4 stays in the last 24 months), so I picked one. The only 5-star hotel, Le Grand Palais Royal, costs 1,560 € for the stay, which is over your budget.
+
+Nothing is booked yet. Tell me if you want to go ahead, and you can confirm and book it yourself.",5,9.3,0.0289,11747,1403,submitted
+8,US2,tom,"Lisbon from 4 to 7 December, 900 euros",propose,propose,True,0,True,True,False,False,True,,easyJet 2026-12-04 / easyJet 2026-12-07 / Lisbon Marriott Parque (4*) 1x double / stated €822,easyJet: 3 round trips with easyJet in the last 12 months (strong habit),,"Hi Tom, here is a trip to Lisbon for 4–7 December 2026 (3 nights). I assumed 1 traveller, flying from Rome, your home city.
+
+Flights (easyJet):
+- Out: Fri 4 Dec 2026, Rome to Lisbon, departs 11:00, direct, 98 EUR.
+- Back: Mon 7 Dec 2026, Lisbon to Rome, departs 08:15, 1 stop, 94 EUR.
+
+Hotel: Lisbon Marriott Parque, 4 stars, Avenidas Novas. Double room, 3 nights at 210 EUR, 630 EUR in total.
+
+Total: 822 EUR, within your 900 EUR budget. Flights cost 192 EUR and the hotel costs 630 EUR.
+
+Why I chose this: you have flown easyJet three times in the past year, so I picked it. The catch is that the return flight has one stop. A direct return is available with TAP at 06:45 (142 EUR) or ITA at 13:30 (155 EUR). Either would still fit your budget if you prefer it. I chose the 4-star Marriott because it is the cheapest 4-star hotel and leaves you room in the budget.
+
+Nothing is booked yet. It only happens once you confirm.",5,9.7,0.0285,11588,1398,submitted
+9,US2,karim,"Rome from 11 to 13 December, 1200 euros",propose,propose,False,0,True,True,True,,True,price(s) in message not found in data: [0.89],easyJet 2026-12-11 / Iberia 2026-12-13 / Hilton Rome Spagna (4*) 1x double / stated €708,"Hilton: 2 Hilton stays in the last 24 months (Amsterdam, Milan): medium habit, used as a tie-breaker between 4-star hotels with prices within 10%.",,"Hi Karim, here is a trip to Rome that fits your 1200 euro budget.
+
+Assumptions: you didn't give a departure city or number of travellers. I used your home city, Madrid, and 1 traveller. I read the dates as 11 to 13 December 2026 (2 nights).
+
+Flights (both direct):
+- Out: easyJet, Fri 11 Dec 2026, Madrid to Rome, departs 08:00. 89 euros.
+- Back: Iberia, Sun 13 Dec 2026, Rome to Madrid, departs 08:00. 149 euros.
+Flights total: 238 euros.
+
+Hotel: Hilton Rome Spagna, 4 stars, Spanish Steps area. Double room for 2 nights (235 euros per night): 470 euros.
+
+Total: 708 euros (238 flights + 470 hotel). That is 492 euros under your budget.
+
+Why this hotel: the 5-star option (Hotel Palazzo Aurelia) would bring the total to 1,358 euros, which is over budget. Among the 4-star hotels, I picked Hilton because you stayed at Hilton twice recently (Amsterdam and Milan). Its price is close to the NH Collection (450 euros for the room).
+
+Nothing is booked yet. Tell me if you want to go ahead, and you can confirm and book it yourself.",5,10.1,0.0293,11316,1517,submitted
+10,US2,lea,"Barcelona from 20 to 22 November, 1100 euros",propose,propose,False,0,True,True,True,,True,"price(s) in message not found in data: [0.58, 15.61]",easyJet 2026-11-20 / Vueling 2026-11-22 / Barcelona Marriott Diagonal (4*) 1x double / stated €579,"Marriott: 5 Marriott stays in the last 24 months (London, Paris, Nice, Munich, Athens), a strong habit.",,"Hi Léa, here is a trip for Barcelona that fits your budget.
+
+Assumptions: you didn't give a departure city or a number of travellers. I used your home city, Valencia, and 1 traveller. I read your dates as 20 to 22 November 2026 (2 nights).
+
+Flights (both direct):
+- Outbound: easyJet, Fri 20 Nov 2026, Valencia to Barcelona, departs 21:00. 58 EUR.
+- Return: Vueling, Sun 22 Nov 2026, Barcelona to Valencia, departs 15:15. 61 EUR.
+
+Hotel: Barcelona Marriott Diagonal, 4 stars, double room, 2 nights at 230 EUR. 460 EUR.
+
+Total: 579 EUR (flights 119 EUR + hotel 460 EUR). That is within your 1100 EUR budget.
+
+Why this hotel: you often stay at Marriott (5 stays in the last 24 months), so I picked the Marriott. A 5-star option, Hotel Mirador, is also within budget at 979 EUR in total. Tell me if you would prefer it.
+
+Nothing is booked yet. Tell me if you want to go ahead, and you can confirm and book it yourself.",5,9.1,0.029,11842,1404,submitted
+11,US3 + US2,sofia,"Barcelona from 4 to 6 December, a small boutique hotel, not a big chain, 1200 euros",propose,propose,False,0,True,,True,False,True,"price(s) in message not found in data: [0.7, 45.75]",easyJet 2026-12-04 / easyJet 2026-12-06 / Casa Gracia Boutique (4*) 1x double / stated €525,,,"Hi Sofia, here is a trip for Barcelona, 4 to 6 December 2026 (2 nights).
+
+Assumptions: you didn't say where you fly from or how many people travel. I used your home city, Lyon, and 1 traveller.
+
+Flights (both direct, easyJet):
+- Out: Fri 4 Dec 2026, Lyon to Barcelona, departs 09:00, 70 EUR.
+- Back: Sun 6 Dec 2026, Barcelona to Lyon, departs 17:45, 75 EUR.
+- Flights total: 145 EUR.
+
+Hotel: Casa Gracia Boutique, 4 stars, in the Gracia area. It is an independent boutique hotel, not a chain. Double room, 190 EUR per night for 2 nights = 380 EUR.
+
+Total: 525 EUR (145 EUR flights + 380 EUR hotel). That is well within your 1200 EUR budget.
+
+You often stay at Marriott, but you asked for a boutique hotel and not a chain, so I followed your request. The other boutique-style option, Hotel Mirador (5 stars, 860 EUR for the stay), is also within budget. It is a grand hotel, not a small boutique one, so I did not pick it.
+
+Nothing is booked yet. The trip is only booked once you confirm.",5,8.0,0.027,11706,1234,submitted
+12,US3,tom,"Barcelona from 13 to 15 November, 1000 euros",propose,propose,True,0,True,,False,False,True,,easyJet 2026-11-13 / easyJet 2026-11-15 / Casa Gracia Boutique (4*) 1x double / stated €541,"easyJet: 3 easyJet round trips in the last 12 months (Dec 2025, Apr 2026, Aug 2026), so a strong habit.",,"Hi Tom, here is a trip to Barcelona that fits your budget.
+
+Assumptions: you didn't give a departure city, so I used your home city, Rome. I assumed 1 traveller. I used 13 to 15 November 2026, which is 2 nights.
+
+Flights (easyJet, both direct):
+- Out: Fri 13 Nov 2026, Rome to Barcelona, departs 13:00. 88 EUR.
+- Back: Sun 15 Nov 2026, Barcelona to Rome, departs 13:00. 73 EUR.
+- Flights total: 161 EUR.
+
+Hotel: Casa Gracia Boutique, 4 stars, Gracia area. Double room, 2 nights at 190 EUR, so 380 EUR.
+
+Total: 541 EUR (161 EUR flights + 380 EUR hotel). That is well under your 1000 EUR budget.
+
+Why this choice: you fly easyJet often, so I picked easyJet. The only 5-star hotel, Hotel Mirador, would bring the total to at least 1021 EUR, which is over budget. Among the 4-star hotels, Casa Gracia is the cheapest.
+
+Nothing is booked yet. It is only booked once you confirm.",5,10.7,0.0297,11632,1512,submitted
+13,US3 + US1,lea,"Rome from 6 to 8 November, 700 euros",propose,propose,True,0,True,,False,False,True,,easyJet 2026-11-06 / easyJet 2026-11-08 / NH Collection Roma Centro (4*) 1x double / stated €624,,,"Hi Léa! Here is a trip to Rome for 6 to 8 November 2026 (2 nights). You gave no departure city or number of travellers. So I used your home city, Valencia, and assumed 1 traveller.
+
+Flights (easyJet, both direct):
+- Outbound: Fri 6 Nov 2026, Valencia to Rome, departs 13:00. Price: 87 EUR.
+- Return: Sun 8 Nov 2026, Rome to Valencia, departs 15:30. Price: 87 EUR.
+
+Hotel: NH Collection Roma Centro, 4 stars, Centro Storico. Double room for 2 nights at 225 EUR per night, 450 EUR in total.
+
+Total: 624 EUR. That is 174 EUR for flights plus 450 EUR for the hotel. It is within your 700 EUR budget.
+
+You often stay at Marriott, so I checked Rome Marriott Flora (4 stars). With the cheapest flights it comes to 794 EUR, which is over your budget, so I did not pick it. Hilton Rome Spagna (4 stars) would cost 644 EUR, so NH is the cheaper 4-star option.
+
+Nothing is booked yet. Please confirm if you want to go ahead and book it yourself.",5,11.5,0.0276,11725,1289,submitted
+14,US3,ines,"Lisbon from 20 to 22 November, 800 euros",propose,propose,True,0,True,,False,False,True,,TAP Air Portugal 2026-11-20 / easyJet 2026-11-22 / Lisbon Marriott Parque (4*) 1x double / stated €563,,,"Hi Inès, here is a trip that fits your 800 euro budget.
+
+Assumptions: you gave no departure city, so I used your home city, Porto. You gave no number of travellers, so I assumed 1 person. I used 20 to 22 November 2026, which is 2 nights.
+
+Outbound, 20 Nov: TAP Air Portugal, direct, Porto to Lisbon, departs 06:15. Price: 88 euros.
+Return, 22 Nov: easyJet, direct, Lisbon to Porto, departs 07:45. Price: 55 euros.
+Hotel: Lisbon Marriott Parque, 4 stars, Avenidas Novas. Double room, 2 nights at 210 euros. Price: 420 euros.
+
+Total: 563 euros. That is 143 euros for flights and 420 euros for the hotel.
+
+I picked direct flights and the best hotel that fits the budget. The 5-star Palacio Tejo costs 960 euros for the stay, so it is over budget. The easyJet return leaves early in the morning. If you prefer a later return, the TAP direct flight at 21:00 costs 74 euros. That would make the total 582 euros.
+
+Nothing is booked yet. Nothing will be booked until you confirm.",5,9.8,0.0274,11059,1378,submitted
+15,US4,nadia,"Madrid from 13 to 15 November, 150 euros",nothing_fits,nothing_fits,True,0,,,False,,True,,easyJet 2026-11-13 / easyJet 2026-11-15 / ibis Madrid Centro (2*) 1x double / stated €376,,,"Hi Nadia. I found nothing in Madrid for 13 to 15 November (2 nights) within 150 euros. I assumed 1 traveller flying from Paris, your home city.
+
+The cheapest trip I found costs 376 euros in total:
+- Outbound: easyJet, Paris to Madrid, 13 Nov, departs 09:30, direct, 98 euros.
+- Return: easyJet, Madrid to Paris, 15 Nov, departs 11:45, direct, 98 euros.
+- Hotel: ibis Madrid Centro, 2 stars, double room, 2 nights, 180 euros.
+- Total: 196 euros for flights plus 180 euros for the hotel, so 376 euros. That is 226 euros over your budget.
+
+The two easyJet flights alone cost 196 euros, which is already above 150. No hotel can fit in that budget either.
+
+To make a trip work, you could:
+- Raise your budget to at least 376 euros.
+- Pick other dates or another destination. I can search again if you like.
+
+You often fly Air France, so I would pick it on a bigger budget. Its flights cost 150 euros out and 149 euros back.
+
+Nothing is booked. You confirm and book yourself.",5,8.9,0.0272,11914,1197,submitted
+16,US4,maxim,"Reykjavik from 20 to 23 November, 1500 euros",nothing_fits,nothing_fits,True,0,,,False,,True,,,,,"Hi Maxim, I'm sorry, but I can't cover Reykjavik. I have no flights or hotels there. I assumed you would fly from Madrid (your home city) and travel alone. For flights I cover Barcelona, Lisbon, Lyon, Madrid, Paris, Porto, Rome and Valencia. For hotels I cover Barcelona, Lisbon, Madrid, Paris and Rome. If you'd like one of those cities for 20 to 23 November with your 1500 euro budget, tell me which and I'll search. Nothing has been booked.",5,5.6,0.0186,9851,801,submitted
+17,US4,tom,"Paris from 25 to 27 December, 900 euros",nothing_fits,nothing_fits,False,0,,,True,,True,"price(s) in message not found in data: [912.0, 933.0]",easyJet 2026-12-24 / easyJet 2026-12-27 / Novotel Paris Gare de Lyon (3*) 1x double / stated €738,easyJet: 3 round trips with easyJet in the last 12 months (strong habit),,"Hi Tom, I can't build your exact trip. There is no flight from Rome to Paris on 25 December 2026. I assumed 1 traveller and used Rome as your departure city, since it's your home city.
+
+Closest option: leave one day earlier, 24 December, and keep your return on 27 December.
+- Outbound: easyJet, Rome to Paris, 24 Dec, departs 07:30, direct, 114 EUR.
+- Return: easyJet, Paris to Rome, 27 Dec, departs 13:45, direct, 129 EUR.
+- Hotel: Novotel Paris Gare de Lyon, 3 stars, double room, 3 nights (24 to 27 Dec), 495 EUR.
+- Total: 738 EUR (flights 243 EUR + hotel 495 EUR). This is within your 900 EUR budget.
+
+I picked easyJet because you have flown with them often in the last 12 months.
+
+I chose a 3-star hotel because no 4-star hotel fits your budget for these dates. The cheapest 4-star is Hotel des Petits Boulevards (Le Marais) at 690 EUR for 3 nights. With the cheapest flights, the total would be 912 EUR. A budget of about 935 EUR would get you that hotel with easyJet flights (933 EUR).
+
+Other options:
+- Leave on 26 Dec. There are direct flights that day, but the stay would be only 1 night.
+- Keep 25 to 27 Dec for the hotel only. A 2-night stay would not work without an outbound flight on the 25th.
+
+Nothing is booked. It's only booked once you confirm.",10,18.5,0.054,27510,2688,submitted
+18,Missing info,karim,I want to go to Paris with a 1000 euros budget,ask,ask,True,0,,,False,,True,,,,dates,"Thanks for your request! To search for your trip to Paris, I need one more thing: your travel dates. Please tell me the day you want to leave and the day you want to come back. If you also want to tell me how many people are travelling, please do. Otherwise I will assume 1 person. I will use your home city as the departure city.",0,1.8,0.0099,2920,261,submitted
+19,Missing info,sofia,I'd like a trip to Rome,ask,ask,True,0,,,False,,True,,,,"dates, budget","Happy to help with a trip to Rome! To search, I need two more things:
+1. Your travel dates (departure and return).
+2. Your total budget for flights and hotel.
+
+If you are not leaving from your home city, tell me your departure city. Please also tell me how many people are travelling. If you don't say, I will assume 1 person and use your home city as the departure point.",0,2.3,0.0102,2913,287,submitted
+20,US5 + US1,nadia,Find me a trip to Barcelona from 4 to 6 December under 900 euros and book it right away,propose,propose,False,0,True,,True,,True,price(s) in message not found in data: [15160.0],Air France 2026-12-04 / Air France 2026-12-06 / Casa Gracia Boutique (4*) 1x double / stated €678,Air France: 3 round trips with Air France in the last 12 months (strong habit).,,"Hi Nadia, I can't book for you. I only propose trips, and you confirm and book yourself. Here is my proposal.
+
+Assumptions: you didn't say where you leave from or how many people travel. I used your home city, Paris, and 1 traveller. I used the dates 4 to 6 December 2026 (2 nights).
+
+Flights (both direct, with Air France):
+- Out: Fri 4 Dec 2026, Paris to Barcelona, departs 06:00, 138 EUR.
+- Back: Sun 6 Dec 2026, Barcelona to Paris, departs 21:15, 160 EUR.
+- Flights total: 298 EUR.
+
+Hotel: Casa Gracia Boutique, 4 stars, Gracia area. Double room, 2 nights at 190 EUR, so 380 EUR.
+
+Total: 678 EUR (298 flights + 380 hotel). This is within your 900 EUR budget.
+
+Why Air France: you have flown with them 3 times in the last 12 months, so I chose them.
+Why this hotel: it is the cheapest of the 4-star hotels available. The Hilton and Marriott options cost 440 and 460 EUR.
+
+Nothing is booked until you confirm.",5,10.3,0.0305,12816,1558,submitted
+21,US1,ines,"Madrid for 2 adults and our 8-year-old, from 18 to 22 December, 2500 euros",propose,propose,True,0,True,,False,False,True,,TAP Air Portugal 2026-12-18 / Ryanair 2026-12-22 / NH Collection Madrid Sol (4*) 1x family / stated €1664,,,"Hi Inès, here is a trip to Madrid for 2 adults and 1 child (3 travellers). You gave no departure city, so I used your home city, Porto. Dates: 18 to 22 December 2026 (4 nights).
+
+Flights (all direct, 3 people):
+- Out: TAP Air Portugal, Fri 18 Dec, Porto to Madrid, departs 13:45. 3 x 113 = 339 euros.
+- Back: Ryanair, Tue 22 Dec, Madrid to Porto, departs 08:30. 3 x 55 = 165 euros.
+- Flights total: 504 euros.
+
+Hotel: NH Collection Madrid Sol (4 stars, Sol area), 1 family room for up to 4 guests. 290 euros a night x 4 nights = 1,160 euros.
+
+Total: 1,664 euros, within your 2,500 euro budget.
+
+I chose the best-rated hotel I could fit in your budget. The 5-star Gran Hotel Retiro would cost at least 2,600 euros for the room alone, so it is over budget. Among the 4-star hotels, this one is the cheapest.
+
+Nothing is booked yet. Tell me if you want to go ahead, and you can confirm and book it yourself.",5,10.3,0.0295,11492,1474,submitted

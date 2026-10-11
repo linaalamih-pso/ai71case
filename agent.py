@@ -27,6 +27,7 @@ MAX_STEPS = 20  # safety stop: max model calls per request
 PRICES = {
     "claude-sonnet-5-5": (2.00, 10.00, 2.50, 0.20),
     "claude-opus-5-5": (4.00, 20.00, 5.00, 0.20),
+    "claude-haiku-5-5": (0.10, 0.50, 0.125, 0.01),
 }
 
 
