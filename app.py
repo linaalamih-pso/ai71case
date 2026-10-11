@@ -10,7 +10,9 @@ The page runs the frozen final version: Haiku 5.5 + prompt v2.
 
 import os
 import re
+import uuid
 from collections import Counter
+from datetime import date, timedelta
 
 import streamlit as st
 
@@ -58,6 +60,28 @@ if key:
     os.environ["AI71_API_KEY"] = key
 
 
+# --- "Me": a profile the visitor builds, turned into fake card payments -------
+AIRLINES = sorted({f["airline"] for f in world.FLIGHTS})
+HOTEL_BRANDS = ["Hilton", "Marriott", "Novotel", "ibis", "NH"]
+ELSEWHERE = ["VIENNA", "BERLIN", "PRAGUE", "LONDON", "AMSTERDAM", "BRUSSELS"]  # cities not in the data
+
+
+def make_profile(name, city, airline, trips, brand, stays):
+    """Fake card payments matching what the visitor chose: trips spread over the
+    last 12 months, hotel stays over the last 24 months."""
+    today = date.fromisoformat(world.TODAY)
+    payments = []
+    for i in range(trips if airline else 0):
+        day = today - timedelta(days=30 + i * 330 // max(trips, 1))
+        payments.append({"date": day.isoformat(), "merchant": airline.upper(), "category": "airline",
+                         "amount_eur": 180.0 + 37 * i})
+    for i in range(stays if brand else 0):
+        day = today - timedelta(days=60 + i * 600 // max(stays, 1))
+        payments.append({"date": day.isoformat(), "merchant": f"{brand.upper()} {ELSEWHERE[i % len(ELSEWHERE)]}",
+                         "category": "hotel", "amount_eur": 260.0 + 45 * i})
+    return {"name": name or "Guest", "home_city": city, "card_payments": sorted(payments, key=lambda p: p["date"])}
+
+
 # --- Sidebar: who is asking, and what the fake world contains ----------------
 def history(user):
     """'Air France x4, easyJet x2' from the card payments."""
@@ -67,9 +91,23 @@ def history(user):
 
 with st.sidebar:
     st.header("Customer")
-    ids = list(world.USERS)
-    user_id = st.selectbox("Who is asking?", ids, key="user_id",
-                           format_func=lambda u: f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})")
+    personas = [u for u in world.USERS if not u.startswith("me-")]
+    st.session_state.setdefault("user_id", personas[0])
+    user_id = st.selectbox("Who is asking?", ["me"] + personas, key="user_id",
+                           format_func=lambda u: "Me: create my profile" if u == "me"
+                           else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})")
+    if user_id == "me":
+        name = st.text_input("Your first name", value="Alex")
+        city = st.selectbox("You live in", world.FLIGHT_CITIES, index=world.FLIGHT_CITIES.index("Paris"))
+        airline = st.selectbox("Airline you fly most", ["None"] + AIRLINES, index=1 + AIRLINES.index("Air France"))
+        trips = st.slider("Round trips with it, last 12 months", 0, 6, 3, help="2 or more = strong habit")
+        brand = st.selectbox("Hotel brand you stay with most", ["None"] + HOTEL_BRANDS, index=1)
+        stays = st.slider("Stays with it, last 24 months", 0, 6, 2, help="3 or more = strong habit, 2 = tie-breaker")
+        # One profile per browser session, so visitors don't overwrite each other
+        st.session_state.setdefault("me_id", f"me-{uuid.uuid4().hex[:8]}")
+        user_id = st.session_state.me_id
+        world.USERS[user_id] = make_profile(name, city, None if airline == "None" else airline, trips,
+                                            None if brand == "None" else brand, stays)
     user = world.USERS[user_id]
     st.caption(f"**Lives in:** {user['home_city']}")
     st.caption(f"**Travel card payments:** {history(user)}")
