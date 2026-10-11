@@ -87,6 +87,32 @@ def main():
             check(all(x["room"] == "family" or x["rooms"] > 1 for x in trips), "every valid trip uses a family room or 2 rooms")
             tight = [f for f in world.flights_on("Porto", "Madrid", "2026-12-18") if f["seats_left"] < 3]
             check(tight, "trap: a Porto -> Madrid flight has fewer than 3 seats")
+            family = [x for x in fits if x["rooms"] == 1]
+            doubles = [x for x in fits if x["rooms"] == 2 and x["hotel"]["stars"] == 4]
+            check(family and doubles and min(x["total"] for x in family if x["hotel"]["stars"] == 4)
+                  < min(x["total"] for x in doubles), "at 4 stars, one family room is cheaper than 2 doubles")
+        if t["id"] == 23:
+            check(all(x["rooms"] >= 2 for x in trips), "trap: Rome has no room for 3, so every trip needs 2 rooms")
+            check([x for x in fits if x["hotel"]["brand"] == "Hilton"], "a Hilton trip fits the budget")
+            check(not [x for x in fits if x["hotel"]["stars"] == 5], "no 5-star trip fits, so 4-star hotels compete")
+        if t["id"] == 24:
+            check(len(fits) == 1, f"trap: exactly one trip fits ({len(fits)})")
+        if t["id"] == 25:
+            check([x for x in fits if x["hotel"]["area"] == "Barceloneta"], "a beach (Barceloneta) hotel fits")
+            check([x for x in fits if x["hotel"]["brand"] == "Marriott"], "trap: the Marriott fits too, but isn't by the beach")
+        if t["id"] == 26:
+            solo = all_trips({**t, "travellers": 1})
+            check([x for x in solo if x["hotel"]["brand"] == "Marriott" and x["total"] <= t["budget"]],
+                  "trap: the Marriott fits the budget for 1 person")
+            check(not [x for x in fits if x["hotel"]["brand"] == "Marriott"], "...but not for 2")
+        if t["id"] == 28:
+            for al in ("Air France", "easyJet"):
+                check([x for x in fits if x["out"]["airline"] == x["ret"]["airline"] == al
+                       and x["out"]["stops"] == x["ret"]["stops"] == 0], f"a direct {al} trip fits the budget")
+            stay = {x["hotel"]["brand"]: x["total"] - x["out"]["price_per_person_eur"] - x["ret"]["price_per_person_eur"]
+                    for x in fits if x["room"] == "double" and x["hotel"]["stars"] == 4}
+            check(stay.get("Marriott", 9e9) < stay.get("Hilton", 0), "Marriott is cheaper than Hilton (both 4 stars)")
+            check(not [x for x in fits if x["hotel"]["stars"] == 5], "no 5-star trip fits, so 4-star hotels compete")
     print("\nALL CHECKS PASSED" if ok else "\nSOME CHECKS FAILED")
 
 

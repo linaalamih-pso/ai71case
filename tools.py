@@ -130,7 +130,7 @@ TOOLS = [
                 "missing_info": {
                     "type": "array",
                     "description": "When action is ask: what you are asking for. Empty otherwise.",
-                    "items": {"type": "string", "enum": ["dates", "budget", "destination", "origin", "travellers"]},
+                    "items": {"type": "string", "enum": ["dates", "budget", "destination", "origin", "travellers", "child_age"]},
                 },
             },
             "required": ["action", "message", "trip", "habits_used", "missing_info"],

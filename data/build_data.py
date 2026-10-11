@@ -242,6 +242,22 @@ USERS = {
         ],
     },
     "ines": {"name": "Inès", "home_city": "Porto", "card_payments": []},
+    # Test 28: two strong airlines (Air France used most) and two medium hotel brands.
+    "hugo": {
+        "name": "Hugo", "home_city": "Paris",
+        "card_payments": [
+            pay("2025-11-28", "AIR FRANCE", "airline", 298.00),
+            pay("2026-02-06", "AIR FRANCE", "airline", 334.50),
+            pay("2026-05-15", "AIR FRANCE", "airline", 287.20),
+            pay("2026-09-04", "AIR FRANCE", "airline", 352.00),
+            pay("2026-01-23", "EASYJET", "airline", 131.40),
+            pay("2026-06-26", "EASYJET", "airline", 158.90),
+            pay("2025-03-14", "HILTON LISBON", "hotel", 344.00),
+            pay("2026-04-10", "HILTON VIENNA", "hotel", 412.00),
+            pay("2025-08-22", "MARRIOTT PRAGUE", "hotel", 376.00),
+            pay("2026-07-31", "COURTYARD BY MARRIOTT ROME", "hotel", 301.50),
+        ],
+    },
 }
 
 

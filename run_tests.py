@@ -2,12 +2,13 @@
 
     python run_tests.py                       # all 21 tests on Sonnet 5.5
     python run_tests.py --tests 1 4 21        # only some tests
+    python run_tests.py --repeat 3            # run every test 3 times (the AI can answer differently each time)
     python run_tests.py --model claude-opus-5-5 --label opus
     python run_tests.py --oracle              # check the grader with perfect answers (no AI, free)
     python run_tests.py --regrade results/<run>   # re-score a past run's answers with the current grader (no AI, free)
 
 Outputs, in results/<label>_<date-time>/:
-- results.csv      one row per test: answer, pass/fail per metric, notes, cost, time
+- results.csv      one row per test (per run): answer, pass/fail per metric, notes, cost, time
 - summary.csv      the metrics, as percentages, vs. their targets
 - transcripts.jsonl  the full conversation of every test (for reading failures)
 """
@@ -65,6 +66,7 @@ def main():
     ap.add_argument("--label", default=None)
     ap.add_argument("--tests", type=int, nargs="*")
     ap.add_argument("--workers", type=int, default=5)
+    ap.add_argument("--repeat", type=int, default=1, help="run every test this many times")
     ap.add_argument("--effort", default=None, help="low / medium / high / xhigh / max (default: the model's default)")
     ap.add_argument("--oracle", action="store_true")
     ap.add_argument("--regrade", default=None, help="folder of a past run: re-score its saved answers")
@@ -75,24 +77,28 @@ def main():
         saved = {}
         for line in open(Path(args.regrade) / "transcripts.jsonl"):
             x = json.loads(line)
-            saved[x["test"]] = x["result"]
-        tests = [t for t in tests if t["id"] in saved]
+            saved[(x["test"], x.get("run", 1))] = x["result"]
+        runs = sorted({(t, r) for t, r in saved})
+        jobs = [(t, r) for t in tests for (tid, r) in runs if tid == t["id"]]
+    else:
+        jobs = [(t, r) for r in range(1, args.repeat + 1) for t in tests]
     label = args.label or ("oracle" if args.oracle else
                            f"{Path(args.regrade).name}_regraded" if args.regrade else args.model)
     out_dir = ROOT / "results" / f"{label}_{datetime.now():%Y%m%d-%H%M%S}"
     out_dir.mkdir(parents=True)
 
     if args.regrade:
-        def run_one(t):
-            return saved[t["id"]]
+        def run_one(t, run):
+            return saved[(t["id"], run)]
     elif args.oracle:
         import oracle
-        run_one = oracle.run
+        def run_one(t, run):
+            return oracle.run(t)
     else:
         from agent import make_client, run_agent
         client = make_client()
 
-        def run_one(t):
+        def run_one(t, run):
             try:
                 return run_agent(t["user"], t["request"], model=args.model, effort=args.effort, client=client)
             except Exception as e:  # keep going; a crashed test counts as failed
@@ -100,17 +106,17 @@ def main():
                         "usage": {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0},
                         "cost_usd": 0.0, "seconds": 0.0, "transcript": []}
 
-    print(f"Running {len(tests)} tests on {label}...")
+    print(f"Running {len(jobs)} tests on {label}...")
     with ThreadPoolExecutor(args.workers) as pool:
-        results = list(pool.map(run_one, tests))
+        results = list(pool.map(lambda job: run_one(*job), jobs))
 
     rows = []
     with open(out_dir / "transcripts.jsonl", "w") as tf:
-        for t, r in zip(tests, results):
+        for (t, run), r in zip(jobs, results):
             m, notes = grader.grade(t, r)
             a = r["answer"] or {}
             rows.append({
-                "test": t["id"], "story": t["story"], "user": t["user"], "request": t["request"],
+                "test": t["id"], "run": run, "story": t["story"], "user": t["user"], "request": t["request"],
                 "expected_action": t["expected_action"], "action": a.get("action", ""),
                 "all_passed": grader.all_passed(m),
                 "purchases": m["purchases"], "correct_trip": m["correct_trip"], "habit_correct": m["habit_correct"],
@@ -124,7 +130,7 @@ def main():
                 "input_tokens": r["usage"]["input"] + r["usage"]["cache_write"] + r["usage"]["cache_read"],
                 "output_tokens": r["usage"]["output"], "stop": r["stop"],
             })
-            tf.write(json.dumps({"test": t["id"], "result": {k: v for k, v in r.items()}}, ensure_ascii=False, default=str) + "\n")
+            tf.write(json.dumps({"test": t["id"], "run": run, "result": {k: v for k, v in r.items()}}, ensure_ascii=False, default=str) + "\n")
 
     with open(out_dir / "results.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -142,6 +148,8 @@ def main():
         ("Habit pushed too far", pct(col("habit_pushed"))[0]),
         ("Right action", pct(col("right_action"))[0]),
         ("All checks passed (headline)", pct(col("all_passed"))[0]),
+        ("Tests passed on every run", pct([all(r["all_passed"] for r in rows if r["test"] == tid)
+                                           for tid in dict.fromkeys(col("test"))])[0]),
         ("Cost per request (avg $)", f"{statistics.mean(col('cost_usd')):.4f}"),
         ("Time to answer (avg s)", f"{statistics.mean(col('seconds')):.1f}"),
         ("Time to answer (max s)", f"{max(col('seconds')):.1f}"),
@@ -160,7 +168,7 @@ def main():
     print("\nFailures:")
     for r in rows:
         if not r["all_passed"]:
-            print(f"  Test {r['test']}: {r['notes']}")
+            print(f"  Test {r['test']} (run {r['run']}): {r['notes']}")
 
 
 if __name__ == "__main__":

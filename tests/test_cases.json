@@ -92,7 +92,8 @@
   ],
   "message_any": [
    "home",
-   "live"
+   "live",
+   "profile"
   ],
   "return": "2026-11-29"
  },
@@ -298,7 +299,8 @@
    "travellers",
    "budget",
    "destination"
-  ]
+  ],
+  "budget": 1000
  },
  {
   "id": 19,
@@ -344,6 +346,132 @@
   "travellers": 3,
   "budget": 2500,
   "no_habits": true,
-  "return": "2026-12-22"
+  "return": "2026-12-22",
+  "trip_must": {
+   "rooms": 1
+  }
+ },
+ {
+  "id": 22,
+  "story": "Missing info",
+  "user": "tom",
+  "request": "A long weekend in Lisbon mid-November, 700 euros",
+  "expected_action": "ask",
+  "budget": 700,
+  "missing_must": [
+   "dates"
+  ],
+  "missing_must_not": [
+   "origin",
+   "travellers",
+   "budget",
+   "destination"
+  ]
+ },
+ {
+  "id": 23,
+  "story": "US1 + US2",
+  "user": "karim",
+  "request": "Rome for me, my wife and my brother, from 4 to 6 December, 1500 euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Rome",
+  "depart": "2026-12-04",
+  "return": "2026-12-06",
+  "travellers": 3,
+  "budget": 1500,
+  "habit_follow": {
+   "hotel_brand": "Hilton"
+  }
+ },
+ {
+  "id": 24,
+  "story": "US1 + US4",
+  "user": "maxim",
+  "request": "Paris from 11 to 14 December, 500 euros",
+  "expected_action": "propose",
+  "origin": "Madrid",
+  "destination": "Paris",
+  "depart": "2026-12-11",
+  "return": "2026-12-14",
+  "travellers": 1,
+  "budget": 500,
+  "no_habits": true
+ },
+ {
+  "id": 25,
+  "story": "US3 + US2",
+  "user": "lea",
+  "request": "Barcelona near the beach, from 27 to 29 November, 700 euros",
+  "expected_action": "propose",
+  "origin": "Valencia",
+  "destination": "Barcelona",
+  "depart": "2026-11-27",
+  "return": "2026-11-29",
+  "travellers": 1,
+  "budget": 700,
+  "habit_not": {
+   "hotel_brand": "Marriott"
+  },
+  "trip_must": {
+   "hotel_area": "Barceloneta"
+  }
+ },
+ {
+  "id": 26,
+  "story": "US3 + US1 + US2",
+  "user": "sofia",
+  "request": "Paris with my partner, from 11 to 13 December, 800 euros",
+  "expected_action": "propose",
+  "origin": "Lyon",
+  "destination": "Paris",
+  "depart": "2026-12-11",
+  "return": "2026-12-13",
+  "travellers": 2,
+  "budget": 800,
+  "habit_not": {
+   "hotel_brand": "Marriott"
+  }
+ },
+ {
+  "id": 27,
+  "story": "Missing info + US1",
+  "user": "nadia",
+  "request": "Lisbon with my daughter from 20 to 22 November, 1200 euros",
+  "expected_action": "ask",
+  "budget": 1200,
+  "missing_must": [
+   "child_age"
+  ],
+  "missing_must_not": [
+   "dates",
+   "budget",
+   "destination",
+   "origin",
+   "travellers"
+  ]
+ },
+ {
+  "id": 28,
+  "story": "US2 + US3",
+  "user": "hugo",
+  "request": "Madrid from 20 to 22 November, 900 euros",
+  "expected_action": "propose",
+  "origin": "Paris",
+  "destination": "Madrid",
+  "depart": "2026-11-20",
+  "return": "2026-11-22",
+  "travellers": 1,
+  "budget": 900,
+  "habit_follow": {
+   "airline": "Air France",
+   "hotel_brand": "Marriott"
+  },
+  "habit_cite": [
+   "Air France"
+  ],
+  "habit_message_all": [
+   "easyJet"
+  ]
  }
 ]

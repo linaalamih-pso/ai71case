@@ -164,5 +164,71 @@
   "name": "Inès",
   "home_city": "Porto",
   "card_payments": []
+ },
+ "hugo": {
+  "name": "Hugo",
+  "home_city": "Paris",
+  "card_payments": [
+   {
+    "date": "2025-11-28",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 298.0
+   },
+   {
+    "date": "2026-02-06",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 334.5
+   },
+   {
+    "date": "2026-05-15",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 287.2
+   },
+   {
+    "date": "2026-09-04",
+    "merchant": "AIR FRANCE",
+    "category": "airline",
+    "amount_eur": 352.0
+   },
+   {
+    "date": "2026-01-23",
+    "merchant": "EASYJET",
+    "category": "airline",
+    "amount_eur": 131.4
+   },
+   {
+    "date": "2026-06-26",
+    "merchant": "EASYJET",
+    "category": "airline",
+    "amount_eur": 158.9
+   },
+   {
+    "date": "2025-03-14",
+    "merchant": "HILTON LISBON",
+    "category": "hotel",
+    "amount_eur": 344.0
+   },
+   {
+    "date": "2026-04-10",
+    "merchant": "HILTON VIENNA",
+    "category": "hotel",
+    "amount_eur": 412.0
+   },
+   {
+    "date": "2025-08-22",
+    "merchant": "MARRIOTT PRAGUE",
+    "category": "hotel",
+    "amount_eur": 376.0
+   },
+   {
+    "date": "2026-07-31",
+    "merchant": "COURTYARD BY MARRIOTT ROME",
+    "category": "hotel",
+    "amount_eur": 301.5
+   }
+  ]
  }
 }
