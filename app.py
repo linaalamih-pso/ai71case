@@ -152,12 +152,15 @@ Each customer has past card payments that the agent uses as a soft preference. A
 | Maxim, Inès | Madrid, Porto | None | No habits |
 """)
 
+def use_example(uid, text):
+    # Runs before the page redraws, so it can still change the customer list and the request box
+    st.session_state.user_id = uid
+    st.session_state.request = text
+
+
 with st.expander("Example requests"):
     for uid, text in EXAMPLES:
-        if st.button(f"{world.USERS[uid]['name']}: {text}", key=text):
-            st.session_state.user_id = uid
-            st.session_state.request = text
-            st.rerun()
+        st.button(f"{world.USERS[uid]['name']}: {text}", key=text, on_click=use_example, args=(uid, text))
 
 request = st.text_area("Your request", key="request", height=90,
                        placeholder="Rome from 27 to 29 November, 1000 euros")
