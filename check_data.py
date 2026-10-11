@@ -25,7 +25,7 @@ def all_trips(t, depart=None, ret=None):
             if h["city"] != t["destination"]:
                 continue
             for rm in h["rooms"]:
-                rooms = -(-n // rm["max_guests"])  # rooms needed (rounded up)
+                rooms = -(-t.get("staying", n) // rm["max_guests"])  # rooms needed (rounded up)
                 if rooms > rm["rooms_left"]:
                     continue
                 total, _ = world.price_trip(o["id"], r["id"], h["id"], rm["type"], rooms, n)
@@ -116,6 +116,45 @@ def main():
                     for x in fits if x["room"] == "double" and x["hotel"]["stars"] == 4}
             check(stay.get("Marriott", 9e9) < stay.get("Hilton", 0), "Marriott is cheaper than Hilton (both 4 stars)")
             check(not [x for x in fits if x["hotel"]["stars"] == 5], "no 5-star trip fits, so 4-star hotels compete")
+        if t["id"] == 29:
+            check(not [x for x in trips if x["total"] <= t["budget"] / t["travellers"]],
+                  "trap: read as a total for both (400), nothing fits")
+        if t["id"] == 30:
+            ez = [x for x in fits if x["out"]["airline"] == x["ret"]["airline"] == "easyJet"]
+            check(ez and all(x["out"]["stops"] for x in ez), "trap: easyJet both ways fits, but the flight out stops")
+            check([x for x in fits if x["out"]["stops"] == x["ret"]["stops"] == 0 and x["ret"]["airline"] == "easyJet"],
+                  "a direct trip with easyJet back fits")
+        if t["id"] == 31:
+            big = [h for h in world.HOTELS if h["city"] == "Rome" and h["stars"] == 5]
+            check(all(r["rooms_left"] < 3 for h in big for r in h["rooms"]), "trap: the 5-star has fewer than 3 rooms left")
+            af = [f for f in world.flights_on("Paris", "Rome", t["depart"]) if f["airline"] == "Air France"]
+            af += [f for f in world.flights_on("Rome", "Paris", t["return"]) if f["airline"] == "Air France"]
+            five = sum(f["price_per_person_eur"] for f in af) * 6 + big[0]["rooms"][0]["price_per_night_eur"] * 2 * 3
+            check(five <= t["budget"], f"trap: Air France + 5-star would fit the budget (€{five}) if rooms were left")
+            check([x for x in fits if x["hotel"]["brand"] == "Hilton" and x["out"]["airline"] == "Air France"],
+                  "Air France + Hilton fits")
+        if t["id"] == 32:
+            check(not [x for x in fits if x["hotel"]["stars"] == 5], "the 5-star is over budget")
+            check(not [x for x in fits if x["hotel"]["brand"] == "Marriott"], "trap: the Marriott habit is over budget")
+        if t["id"] == 33:
+            check([x for x in fits if x["hotel"]["brand"] == "Marriott"], "a Marriott trip fits 1.2k")
+        if t["id"] == 34:
+            five = [x for x in trips if x["hotel"]["stars"] == 5]
+            check(five and not [x for x in five if x["total"] <= t["budget"]], "trap: no 5-star trip fits")
+            check(min(x["total"] for x in five) - t["budget"] < 50, "...but the cheapest 5-star is just over")
+            check([x for x in fits if x["hotel"]["stars"] == 4], "a 4-star trip fits (the tempting wrong answer)")
+        if t["id"] == 36:
+            check(all(x["rooms"] == 2 for x in trips), "rooms for 4 in Lisbon = 2 doubles")
+            four = all_trips({**t, "travellers": 4})
+            check(not [x for x in four if x["total"] <= t["budget"] and x["hotel"]["brand"] == "Hilton"
+                       and x["out"]["airline"] == "Air France"], "trap: with 4 seats, Air France + Hilton is over budget")
+            check([x for x in fits if x["hotel"]["brand"] == "Hilton" and x["out"]["airline"] == x["ret"]["airline"] == "Air France"],
+                  "Air France + Hilton fits with 2 seats and 2 rooms")
+        if t["id"] == 37:
+            check(all(x["rooms"] >= 2 for x in trips), "trap: no room holds 5")
+            check(not [x for x in trips if x["hotel"]["brand"] == "Marriott" and x["room"] == "family"],
+                  "trap: the Marriott family room has only 1 left")
+            check([x for x in fits if x["hotel"]["stars"] == 4], "a 4-star option fits (Hilton, 3 doubles)")
     print("\nALL CHECKS PASSED" if ok else "\nSOME CHECKS FAILED")
 
 

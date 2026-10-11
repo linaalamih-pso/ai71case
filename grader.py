@@ -98,6 +98,7 @@ def check_trip(test, trip, depart=None, ret=None):
     hotel = world.HOTELS_BY_ID[trip["hotel_id"]]
     room = world.find_room(hotel, trip["room_type"])
     n = test["travellers"]
+    staying = test.get("staying", n)
     if (out["origin"], out["destination"]) != (test["origin"], test["destination"]):
         problems.append(f"outbound goes {out['origin']} -> {out['destination']}")
     if (back["origin"], back["destination"]) != (test["destination"], test["origin"]):
@@ -113,8 +114,8 @@ def check_trip(test, trip, depart=None, ret=None):
     for f in (out, back):
         if f["seats_left"] < n:
             problems.append(f"{f['id']} has {f['seats_left']} seats left for {n} travellers")
-    if room["max_guests"] * int(trip["rooms"]) < n:
-        problems.append(f"{trip['rooms']} x {room['type']} room holds {room['max_guests'] * int(trip['rooms'])}, need {n}")
+    if room["max_guests"] * int(trip["rooms"]) < staying:
+        problems.append(f"{trip['rooms']} x {room['type']} room holds {room['max_guests'] * int(trip['rooms'])}, need {staying}")
     if int(trip["rooms"]) > room["rooms_left"]:
         problems.append(f"only {room['rooms_left']} {room['type']} rooms left")
     must = test.get("trip_must", {})
@@ -122,6 +123,14 @@ def check_trip(test, trip, depart=None, ret=None):
         problems.append(f"{trip['rooms']} rooms, expected {must['rooms']}")
     if "hotel_area" in must and hotel["area"] != must["hotel_area"]:
         problems.append(f"hotel is in {hotel['area']}, expected {must['hotel_area']}")
+    if must.get("direct") and (out["stops"] or back["stops"]):
+        problems.append("a flight has a stop, but the customer asked for direct flights")
+    if "min_stars" in must and hotel["stars"] < must["min_stars"]:
+        problems.append(f"{hotel['stars']}-star hotel, expected {must['min_stars']}+ stars")
+    if "max_stars" in must and hotel["stars"] > must["max_stars"]:
+        problems.append(f"{hotel['stars']}-star hotel, expected at most {must['max_stars']} stars")
+    if "return_airline" in must and back["airline"] != must["return_airline"]:
+        problems.append(f"return flight is {back['airline']}, expected {must['return_airline']}")
     return total, problems
 
 
@@ -201,7 +210,10 @@ def grade(test, result):
                 notes.append("didn't list the cities covered")
         elif kind == "cheapest":
             t, problems = check_trip(test, trip)
-            cheapest = min(x["total"] for x in all_trips(test))
+            cm = test.get("closest_must", {})
+            cheapest = min(x["total"] for x in all_trips(test) if x["hotel"]["stars"] >= cm.get("min_stars", 0))
+            if not problems and trip and world.HOTELS_BY_ID[trip["hotel_id"]]["stars"] < cm.get("min_stars", 0):
+                problems.append(f"closest option is not {cm['min_stars']}-star, as asked")
             if problems:
                 ok = False
                 notes += [f"closest option: {p}" for p in problems]
