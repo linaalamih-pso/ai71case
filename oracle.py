@@ -20,6 +20,11 @@ def _pick(test, trips):
         fits = [x for x in fits if not x["hotel"]["is_chain"]]
     if test.get("habit_not", {}).get("hotel_brand"):
         fits = [x for x in fits if x["hotel"]["brand"] != test["habit_not"]["hotel_brand"]]
+    must = test.get("trip_must", {})
+    if "rooms" in must:
+        fits = [x for x in fits if x["rooms"] == must["rooms"]]
+    if "hotel_area" in must:
+        fits = [x for x in fits if x["hotel"]["area"] == must["hotel_area"]]
     return min(fits, key=lambda x: x["total"])
 
 
@@ -31,8 +36,9 @@ def _trip(test, x):
 def answer(test):
     exp = test["expected_action"]
     if exp == "ask":
-        return {"action": "ask", "message": "To find your trip, I need your travel dates" +
-                (" and your budget." if "budget" in test["missing_must"] else "."),
+        words = {"dates": "your exact travel dates", "budget": "your budget", "child_age": "your child's age"}
+        return {"action": "ask", "message": "To find your trip, I need " +
+                " and ".join(words[m] for m in test["missing_must"]) + ".",
                 "trip": None, "habits_used": [], "missing_info": test["missing_must"]}
     if exp == "nothing_fits":
         if test["closest"] == "none":
@@ -53,6 +59,7 @@ def answer(test):
     names = " and ".join(h["name"] for h in habits)
     msg = (f"Here is your trip for €{x['total']}. "
            + (f"You often use {names} (5 times), so I picked it. " if habits else "")
+           + "".join(f"You also often use {w}. " for w in test.get("habit_message_all", []))
            + "I used your home city as the origin. Nothing is booked until you confirm.")
     return {"action": "propose", "trip": _trip(test, x), "habits_used": habits, "missing_info": [], "message": msg}
 

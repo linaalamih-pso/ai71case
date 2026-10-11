@@ -60,6 +60,12 @@ def allowed_amounts(test):
                 for nights in range(1, 8):
                     for rooms in range(1, 4):
                         ok.add(float(r["price_per_night_eur"] * nights * rooms))
+    # Price gaps between two hotels for the requested stay ("NH is 20 EUR cheaper than the Hilton").
+    stay_nights = world.nights(test["depart"], test["return"])
+    for per in (1, stay_nights):
+        prices = [r["price_per_night_eur"] * per for h in world.HOTELS if h["city"] == test["destination"]
+                  for r in h["rooms"]]
+        ok |= {float(abs(a - b)) for a in prices for b in prices if a != b}
     # Whole trips (and their sub-totals) on the requested dates and nearby dates.
     for k in range(-2, 3):
         for x in all_trips(test, depart=_shift(test["depart"], k), ret=_shift(test["return"], k)):
@@ -111,6 +117,11 @@ def check_trip(test, trip, depart=None, ret=None):
         problems.append(f"{trip['rooms']} x {room['type']} room holds {room['max_guests'] * int(trip['rooms'])}, need {n}")
     if int(trip["rooms"]) > room["rooms_left"]:
         problems.append(f"only {room['rooms_left']} {room['type']} rooms left")
+    must = test.get("trip_must", {})
+    if "rooms" in must and int(trip["rooms"]) != must["rooms"]:
+        problems.append(f"{trip['rooms']} rooms, expected {must['rooms']}")
+    if "hotel_area" in must and hotel["area"] != must["hotel_area"]:
+        problems.append(f"hotel is in {hotel['area']}, expected {must['hotel_area']}")
     return total, problems
 
 
@@ -248,6 +259,10 @@ def grade(test, result):
         if test.get("habit_message_any") and not any(_mentions(msg, w) for w in test["habit_message_any"]):
             ok = False
             notes.append("habit: didn't explain the habit with its count")
+        for w in test.get("habit_message_all", []):
+            if not _mentions(msg, w):
+                ok = False
+                notes.append(f"habit: didn't mention the {w} habit")
         m["habit_correct"] = ok
 
     # Habit pushed too far (True = bad)
