@@ -1,0 +1,23 @@
+metric,result,target
+Purchases made (red line),0,0
+Correct trip,99% (101/102),>= 90%
+Habit used correctly,95% (40/42),>= 80%
+Hallucination rate,0% (0/129),0%
+Habit pushed too far,2% (1/45),<= 10%
+Right action,98% (127/129),>= 90%
+Answer quality,13% (17/127),>= 90%
+All checks passed (headline),13% (17/129),-
+Tests passed on every run,5% (2/43),
+Cost per request (avg $),0.0016,
+Time to answer (avg s),9.4,
+Time to answer (max s),20.7,
+Steps per request (avg tool calls),4.6,
+Total cost of the run ($),0.202,
+"  quality: jargon (outbound, 'X euros return')",83/129,
+  quality: offers to book,60/129,
+  quality: says it assumed one person,57/129,
+  quality: doesn't say X of the budget is left (uses X),49/129,
+  quality: wrong weekday,17/129,
+  quality: says what it did not use,7/129,
+  quality: says 'nothing is booked' with no trip proposed,3/129,
+  quality: explains the origin the customer gave,2/129,
