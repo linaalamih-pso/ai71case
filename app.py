@@ -26,6 +26,12 @@ MODEL = "claude-haiku-5-5"
 PROMPT = "v2"
 MAX_REQUESTS = 30  # per browser session, to keep costs bounded
 
+GOOD_TO_TEST = {  # shown in "Who is asking?"
+    "nadia": "airline habit, hotel tie-break", "hugo": "two habits competing", "tom": "airline habit",
+    "sofia": "hotel habit", "lea": "hotel habit", "karim": "hotel tie-break only",
+    "maxim": "no habits", "ines": "no habits",
+}
+
 EXAMPLES = [
     ("nadia", "Lisbon from 20 to 22 November for me and my partner, 1200 euros"),
     ("hugo", "Rome from 4 to 6 December, 900 euros"),
@@ -107,21 +113,6 @@ or choose "Me: create my profile" there to set your own city, airline and hotel 
 Limit: {MAX_REQUESTS} requests per visit.
 """)
 
-with st.expander("Who to test with"):
-    st.markdown("""
-Each customer has past card payments that the agent uses as a soft preference. An explicit request always wins.
-
-| Customer | Lives in | Card history | Good to test |
-|---|---|---|---|
-| Nadia | Paris | Air France often, 2 Hilton stays | Airline habit, hotel tie-break |
-| Hugo | Paris | Air France and easyJet, Hilton and Marriott | Two habits competing |
-| Tom | Rome | easyJet often | Airline habit |
-| Sofia | Lyon | Marriott often | Hotel habit |
-| Léa | Valencia | Marriott often | Hotel habit |
-| Karim | Madrid | 2 Hilton stays | Hotel tie-break only |
-| Maxim, Inès | Madrid, Porto | None | No habits |
-""")
-
 def use_example(uid, text):
     # Runs before the page redraws, so it can still change the customer list and the request box
     st.session_state.user_id = uid
@@ -136,7 +127,10 @@ personas = [u for u in world.USERS if not u.startswith("me-")]
 st.session_state.setdefault("user_id", personas[0])
 user_id = st.selectbox("Who is asking?", ["me"] + personas, key="user_id",
                        format_func=lambda u: "Me: create my profile" if u == "me"
-                       else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})")
+                       else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})"
+                       + (f" · good to test: {GOOD_TO_TEST[u]}" if u in GOOD_TO_TEST else ""),
+                       help="Each customer has past card payments that the agent uses as a soft preference. "
+                            "An explicit request always wins.")
 if user_id == "me":
     with st.container(border=True):
         left, right = st.columns(2)
@@ -220,21 +214,26 @@ def trip_card(trip, action, habits, budget):
             if os.path.exists(photo):
                 st.image(photo, use_container_width=True)
             st.subheader(f"{out['origin']} → {out['destination']}")
+        st.markdown("**Flights**")
         flights = st.columns(2)
         for col, label, f in ((flights[0], "Departure", out), (flights[1], "Return", ret)):
             if f:
                 stops = "Direct" if f["stops"] == 0 else f"{f['stops']} stop(s)"
-                col.markdown(f"✈️ **{label}** · {nice_date(f['date'])}  \n"
+                col.markdown(f"✈️ {label} · {nice_date(f['date'])}  \n"
                              f"{f['airline']}, {f['departure_time']} · {stops}  \n"
                              f"€{f['price_per_person_eur']} per person")
         if hotel:
+            st.divider()
+            st.markdown("**Hotel**")
             nights = ""
             if out and ret:
                 n = (date.fromisoformat(ret["date"]) - date.fromisoformat(out["date"])).days
                 nights = f" · {n} night{'s' if n > 1 else ''}"
-            st.markdown(f"🏨 **{hotel['name']}** {'★' * hotel['stars']}  \n"
+            st.markdown(f"🏨 {hotel['name']} {'★' * hotel['stars']}  \n"
                         f"{hotel['area']} · {trip.get('rooms', 1)} × {trip.get('room_type')} room{nights}")
         if total is not None:
+            st.divider()
+            st.markdown("**Budget**")
             st.markdown(f"### €{total:,.0f}")
             st.caption(f"Total for {travellers} traveller{'s' if travellers > 1 else ''}, checked against the data")
             if budget:
@@ -242,6 +241,9 @@ def trip_card(trip, action, habits, budget):
                     st.progress(total / budget, text=f"€{total:,.0f} of your €{budget:,.0f} budget · €{budget - total:,.0f} left")
                 else:
                     st.progress(1.0, text=f"⚠️ €{total - budget:,.0f} over your €{budget:,.0f} budget")
+        if habits:
+            st.divider()
+            st.markdown("**Why this choice**")
         for h in habits:
             icon = "✈️" if h.get("kind") == "airline" else "🏨"
             st.markdown(f":blue-badge[{icon} Your habit: {h.get('name')}] {h.get('reason')}")
