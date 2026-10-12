@@ -83,42 +83,11 @@ def make_profile(name, city, airline, trips, brand, stays):
     return {"name": name or "Guest", "home_city": city, "card_payments": sorted(payments, key=lambda p: p["date"])}
 
 
-# --- Sidebar: who is asking, and what the fake world contains ----------------
+# --- Customer card payments, in one line -------------------------------------
 def history(user):
     """'Air France x4, easyJet x2' from the card payments."""
     counts = Counter(p["merchant"].title() for p in user["card_payments"])
     return ", ".join(f"{m} x{n}" for m, n in counts.most_common()) or "no travel payments"
-
-
-with st.sidebar:
-    st.header("Customer")
-    personas = [u for u in world.USERS if not u.startswith("me-")]
-    st.session_state.setdefault("user_id", personas[0])
-    user_id = st.selectbox("Who is asking?", ["me"] + personas, key="user_id",
-                           format_func=lambda u: "Me: create my profile" if u == "me"
-                           else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})")
-    if user_id == "me":
-        name = st.text_input("Your first name", value="Alex")
-        city = st.selectbox("You live in", world.FLIGHT_CITIES, index=world.FLIGHT_CITIES.index("Paris"))
-        airline = st.selectbox("Airline you fly most", ["None"] + AIRLINES, index=1 + AIRLINES.index("Air France"))
-        trips = st.slider("Round trips with it, last 12 months", 0, 6, 3, help="2 or more = strong habit")
-        brand = st.selectbox("Hotel brand you stay with most", ["None"] + HOTEL_BRANDS, index=1)
-        stays = st.slider("Stays with it, last 24 months", 0, 6, 2, help="3 or more = strong habit, 2 = tie-breaker")
-        # One profile per browser session, so visitors don't overwrite each other
-        st.session_state.setdefault("me_id", f"me-{uuid.uuid4().hex[:8]}")
-        user_id = st.session_state.me_id
-        world.USERS[user_id] = make_profile(name, city, None if airline == "None" else airline, trips,
-                                            None if brand == "None" else brand, stays)
-    user = world.USERS[user_id]
-    st.caption(f"**Lives in:** {user['home_city']}")
-    st.caption(f"**Travel card payments:** {history(user)}")
-
-    st.header("What the agent can search")
-    st.caption(f"Today is {world.TODAY} in this fake world.")
-    st.caption("**Hotels in:** " + ", ".join(world.HOTEL_CITIES))
-    st.caption("**Flights from:** " + ", ".join(world.FLIGHT_CITIES))
-    st.caption("**Dates:** 20 October 2026 to 10 January 2027")
-    st.caption("The data is made up. The agent proposes trips and never books.")
 
 
 # --- Main page -----------------------------------------------------------------
@@ -133,7 +102,7 @@ and proposes one trip. **It never books.** Any language works.
 Flights between these cities, plus {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}.
 Trips from 20 October 2026 to 10 January 2027 ("today" is 11 October 2026).
 
-**Pick a customer** in the left panel (on a phone, tap the arrow at the top left),
+**Pick a customer** in "Who is asking?" below,
 or choose "Me: create my profile" there to set your own city, airline and hotel brand.
 Limit: {MAX_REQUESTS} requests per visit.
 """)
@@ -162,6 +131,28 @@ def use_example(uid, text):
 with st.expander("Example requests"):
     for uid, text in EXAMPLES:
         st.button(f"{world.USERS[uid]['name']}: {text}", key=text, on_click=use_example, args=(uid, text))
+
+personas = [u for u in world.USERS if not u.startswith("me-")]
+st.session_state.setdefault("user_id", personas[0])
+user_id = st.selectbox("Who is asking?", ["me"] + personas, key="user_id",
+                       format_func=lambda u: "Me: create my profile" if u == "me"
+                       else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})")
+if user_id == "me":
+    with st.container(border=True):
+        left, right = st.columns(2)
+        name = left.text_input("Your first name", value="Alex")
+        city = right.selectbox("You live in", world.FLIGHT_CITIES, index=world.FLIGHT_CITIES.index("Paris"))
+        airline = left.selectbox("Airline you fly most", ["None"] + AIRLINES, index=1 + AIRLINES.index("Air France"))
+        trips = right.slider("Round trips with it, last 12 months", 0, 6, 3, help="2 or more = strong habit")
+        brand = left.selectbox("Hotel brand you stay with most", ["None"] + HOTEL_BRANDS, index=1)
+        stays = right.slider("Stays with it, last 24 months", 0, 6, 2, help="3 or more = strong habit, 2 = tie-breaker")
+    # One profile per browser session, so visitors don't overwrite each other
+    st.session_state.setdefault("me_id", f"me-{uuid.uuid4().hex[:8]}")
+    user_id = st.session_state.me_id
+    world.USERS[user_id] = make_profile(name, city, None if airline == "None" else airline, trips,
+                                        None if brand == "None" else brand, stays)
+user = world.USERS[user_id]
+st.caption(f"Lives in {user['home_city']} · Travel card payments: {history(user)}")
 
 request = st.text_area("Your request", key="request", height=90,
                        placeholder="Rome from 27 to 29 November, 1000 euros")
