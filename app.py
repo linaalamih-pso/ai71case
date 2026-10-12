@@ -26,10 +26,10 @@ MODEL = "claude-haiku-5-5"
 PROMPT = "v2"
 MAX_REQUESTS = 30  # per browser session, to keep costs bounded
 
-GOOD_TO_TEST = {  # shown in "Who is asking?"
-    "nadia": "airline habit, hotel tie-break", "hugo": "two habits competing", "tom": "airline habit",
-    "sofia": "hotel habit", "lea": "hotel habit", "karim": "hotel tie-break only",
-    "maxim": "no habits", "ines": "no habits",
+HABIT = {  # shown in "Who is asking?"
+    "nadia": "usually flies Air France", "hugo": "mixed habits (Air France and easyJet, Hilton and Marriott)",
+    "tom": "usually flies easyJet", "sofia": "usually stays at Marriott", "lea": "usually stays at Marriott",
+    "karim": "stayed at Hilton twice", "maxim": "no travel history", "ines": "no travel history",
 }
 
 EXAMPLES = [
@@ -128,7 +128,7 @@ st.session_state.setdefault("user_id", personas[0])
 user_id = st.selectbox("Who is asking?", ["me"] + personas, key="user_id",
                        format_func=lambda u: "Me: create my profile" if u == "me"
                        else f"{world.USERS[u]['name']} ({world.USERS[u]['home_city']})"
-                       + (f" · good to test: {GOOD_TO_TEST[u]}" if u in GOOD_TO_TEST else ""),
+                       + (f" · {HABIT[u]}" if u in HABIT else ""),
                        help="Each customer has past card payments that the agent uses as a soft preference. "
                             "An explicit request always wins.")
 if user_id == "me":
