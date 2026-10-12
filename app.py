@@ -98,8 +98,8 @@ A prototype of a travel assistant for a digital bank. Ask for a trip as a custom
 the agent searches flights and hotels, checks the budget, uses the customer's card history as a hint,
 and proposes one trip. **It never books.** Any language works.
 
-**Small, made-up data set.** Hotels in {", ".join(world.HOTEL_CITIES)}.
-Flights between these cities, plus {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}.
+**Small, made-up data set.** Destinations: {", ".join(world.HOTEL_CITIES)}.
+Customers can also fly from {", ".join(c for c in world.FLIGHT_CITIES if c not in world.HOTEL_CITIES)}, but there are no hotels there.
 Trips from 20 October 2026 to 10 January 2027 ("today" is 11 October 2026).
 
 **Pick a customer** in "Who is asking?" below,
