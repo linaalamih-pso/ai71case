@@ -225,6 +225,9 @@ def trip_card(trip, action, habits, budget):
     with st.container(border=True):
         st.caption("PROPOSED TRIP" if action == "propose" else "CLOSEST OPTION (DOES NOT FIT)")
         if out:
+            photo = f"assets/cities/{out['destination']}.jpg"
+            if os.path.exists(photo):
+                st.image(photo, use_container_width=True)
             st.subheader(f"{out['origin']} → {out['destination']}")
         flights = st.columns(2)
         for col, label, f in ((flights[0], "Departure", out), (flights[1], "Return", ret)):
