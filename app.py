@@ -8,6 +8,7 @@ Hosted on Streamlit Community Cloud. Two private settings ("secrets"):
 The page runs the frozen final version: Haiku 5.5 + prompt v2.
 """
 
+import json
 import os
 import re
 import unicodedata
@@ -156,21 +157,6 @@ go = st.button("Find a trip", type="primary", disabled=not request.strip() or us
 if used >= MAX_REQUESTS:
     st.info("Request limit reached for this session.")
 
-if go:
-    if not key:
-        st.error("No API key configured.")
-        st.stop()
-    st.session_state.used = used + 1
-    st.session_state.asked = request
-    with st.spinner("The agent is searching... (about 10 seconds)"):
-        try:
-            st.session_state.result = run_agent(user_id, request, model=MODEL,
-                                                system_prompt=PROMPTS[PROMPT], client=make_client())
-        except Exception as e:
-            st.session_state.result = None
-            st.error(f"Something went wrong: {e}")
-
-
 def budget_from(request, travellers=1):
     """The budget in euros written in the request, or None. Only for the budget bar on the page."""
     text = "".join(str(unicodedata.digit(c)) if c.isdigit() else c for c in request)  # Arabic digits
@@ -251,16 +237,60 @@ def trip_card(trip, action, habits, budget):
             st.warning(p)
 
 
-def step_label(call):
-    a = call["input"]
-    return {
-        "get_user_profile": "Read the customer's profile (name, home city)",
-        "get_card_payments": "Read the customer's travel card payments",
-        "search_flights": f"Searched flights {a.get('origin')} → {a.get('destination')} on {a.get('date')}",
-        "search_hotels": f"Searched hotels in {a.get('city')}, {a.get('check_in')} to {a.get('check_out')}",
-        "book_trip": "Tried to book (blocked: booking is disabled)",
-        "submit_answer": "Sent the answer",
-    }.get(call["tool"], call["tool"])
+def money(values):
+    return f"from €{min(values):,.0f}" if values else ""
+
+
+def step_line(name, args, result):
+    """One plain-language line per tool call, with what it found."""
+    try:
+        r = json.loads(result)
+    except (TypeError, ValueError):
+        r = {}
+    if r.get("error") and name != "book_trip":
+        return f"⚠️ {name.replace('_', ' ').capitalize()}: {r['error']}"
+    if name == "get_user_profile":
+        return f"👤 Read the profile: {r.get('name')}, lives in {r.get('home_city')}"
+    if name == "get_card_payments":
+        pays = r.get("payments", [])
+        top = Counter(p["merchant"].title() for p in pays).most_common(3)
+        found = ", ".join(f"{m} x{n}" for m, n in top)
+        return f"💳 Read {len(pays)} travel card payments" + (f": {found}" if found else " (none)")
+    if name == "search_flights":
+        flights = r.get("flights", [])
+        when = nice_date(args["date"]) if args.get("date") else ""
+        line = f"✈️ Searched flights {args.get('origin')} → {args.get('destination')}, {when}: "
+        if not flights:
+            return line + "none found"
+        airlines = ", ".join(sorted({f["airline"] for f in flights}))
+        return line + f"{len(flights)} found ({airlines}), {money([f['price_per_person_eur'] for f in flights])} per person"
+    if name == "search_hotels":
+        hotels = r.get("hotels", [])
+        nights = hotels[0]["nights"] if hotels else 0
+        prices = [room["price_per_night_eur"] for h in hotels for room in h["rooms"]]
+        return (f"🏨 Searched hotels in {args.get('city')}, {nights} night{'s' if nights != 1 else ''}: "
+                f"{len(hotels)} found, {money(prices)} a night")
+    if name == "book_trip":
+        return "⛔ Tried to book: blocked, booking is disabled"
+    if name == "submit_answer":
+        return {"propose": "✅ Sent the proposal", "nothing_fits": "✅ Said nothing fits, with the closest option",
+                "ask": "❓ Asked the customer a question"}.get(args.get("action"), "✅ Sent the answer")
+    return name
+
+
+def steps_from(transcript):
+    """(name, input, result) for every tool call, read back from a saved transcript."""
+    calls, steps = {}, []
+    for m in transcript:
+        if isinstance(m["content"], str):
+            continue
+        for c in m["content"]:
+            if c.get("type") == "tool_use":
+                calls[c["id"]] = c
+            elif c.get("type") == "tool_result" and c.get("tool_use_id") in calls:
+                call = calls[c["tool_use_id"]]
+                steps.append((call["name"], call["input"], c.get("content")))
+    return steps
 
 
 def last_text(transcript):
@@ -276,10 +306,32 @@ def last_text(transcript):
     return ""
 
 
+if go:
+    if not key:
+        st.error("No API key configured.")
+        st.stop()
+    st.session_state.used = used + 1
+    st.session_state.asked = request
+    with st.status("The agent is working...", expanded=True) as live:
+        try:
+            st.session_state.result = run_agent(
+                user_id, request, model=MODEL, system_prompt=PROMPTS[PROMPT], client=make_client(),
+                on_step=lambda name, args, res: live.write(step_line(name, args, res)))
+        except Exception as e:
+            st.session_state.result = None
+            live.update(label="Something went wrong", state="error")
+            st.error(f"Something went wrong: {e}")
+            st.stop()
+    st.rerun()  # redraw with the steps folded and the trip card on top
+
+
 result = st.session_state.get("result")
 if result:
     answer = result["answer"]
-    st.divider()
+    steps = steps_from(result["transcript"])
+    with st.status(f"The agent worked in {len(steps)} steps, {result['seconds']} s", state="complete", expanded=False):
+        for step in steps:
+            st.write(step_line(*step))
     if answer:
         if answer.get("trip"):  # the card first: the answer at a glance, details in the text below
             trip_card(answer["trip"], answer["action"], answer.get("habits_used", []),
@@ -295,9 +347,4 @@ if result:
                    "Its raw text is shown below.")
         st.markdown(last_text(result["transcript"]) or "_No text._")
 
-    with st.expander(f"How the agent got there: {len(result['tool_calls'])} steps"):
-        for i, c in enumerate(result["tool_calls"], 1):
-            st.markdown(f"{i}. {step_label(c)} `{c['tool']}`")
-        if result["purchase_attempts"]:
-            st.markdown(f"⛔ Tried to book {result['purchase_attempts']} time(s); booking is disabled.")
     st.caption(f"{result['seconds']} s · ${result['cost_usd']:.4f} · model {MODEL}, prompt {PROMPT}")

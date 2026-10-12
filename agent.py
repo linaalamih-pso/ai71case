@@ -46,7 +46,8 @@ def cost_usd(model, usage):
             + usage["cache_write"] * p_cw + usage["cache_read"] * p_cr) / 1_000_000
 
 
-def run_agent(user_id, request, model=DEFAULT_MODEL, system_prompt=SYSTEM_PROMPT, effort=None, client=None):
+def run_agent(user_id, request, model=DEFAULT_MODEL, system_prompt=SYSTEM_PROMPT, effort=None, client=None, on_step=None):
+    """on_step(name, input, result) is called after each tool call (the web page shows it live)."""
     client = client or make_client()
     box = Toolbox(user_id)
     messages = [{"role": "user", "content": request}]
@@ -80,6 +81,9 @@ def run_agent(user_id, request, model=DEFAULT_MODEL, system_prompt=SYSTEM_PROMPT
         results = [{"type": "tool_result", "tool_use_id": c.id, "content": box.run(c.name, c.input)}
                    for c in tool_calls]
         messages.append({"role": "user", "content": results})
+        if on_step:
+            for c, r in zip(tool_calls, results):
+                on_step(c.name, c.input, r["content"])
         if box.final_answer is not None:
             stop = "submitted"
             break
