@@ -321,11 +321,13 @@ def show_answer(turn):
             trip_card(answer["trip"], answer["action"], answer.get("habits_used", []),
                       budget_from(turn["sent"], answer["trip"].get("travellers", 1)))
         message = answer["message"]
-        if language(message) == "ar":  # Arabic reads right to left
-            st.markdown('<style>.rtl{text-align:right} .rtl ul,.rtl ol{padding-left:0;padding-right:1.5em}</style>'
-                        f'<div dir="rtl" class="rtl">\n\n{message}\n\n</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(message)
+        # With a trip card the text mostly repeats it: keep it folded. Questions and "nothing fits" stay open.
+        with (st.expander("Read the agent's full message") if answer.get("trip") else st.container()):
+            if language(message) == "ar":  # Arabic reads right to left
+                st.markdown('<style>.rtl{text-align:right} .rtl ul,.rtl ol{padding-left:0;padding-right:1.5em}</style>'
+                            f'<div dir="rtl" class="rtl">\n\n{message}\n\n</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(message)
     else:
         st.warning("The agent did not send its answer through the answer form (a known issue, about 5% of requests). "
                    "Its raw text is shown below.")
