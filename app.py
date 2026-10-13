@@ -118,7 +118,7 @@ def use_example(uid, text):
     # Runs before the page redraws, so it can still change the customer list and the request box
     st.session_state.user_id = uid
     st.session_state.chat = []
-    st.session_state.pending = text
+    st.session_state.chat_box = text  # fills the message box, so the request can be edited before sending
 
 
 with st.expander("Example requests"):
@@ -347,9 +347,8 @@ if chat:
 used = st.session_state.get("used", 0)
 if used >= MAX_REQUESTS:
     st.info("Request limit reached for this session.")
-typed = st.chat_input("Reply to the agent..." if chat else "Ask for a trip, e.g. Rome from 27 to 29 November, 1000 euros",
-                      disabled=used >= MAX_REQUESTS)
-text = st.session_state.pop("pending", None) or typed
+text = st.chat_input("Reply to the agent..." if chat else "Ask for a trip, e.g. Rome from 27 to 29 November, 1000 euros",
+                      disabled=used >= MAX_REQUESTS, key="chat_box")
 
 if text:
     if not key:
