@@ -117,7 +117,8 @@ Limit: {MAX_REQUESTS} requests per visit.
 def use_example(uid, text):
     # Runs before the page redraws, so it can still change the customer list and the request box
     st.session_state.user_id = uid
-    st.session_state.request = text
+    st.session_state.chat = []
+    st.session_state.pending = text
 
 
 with st.expander("Example requests"):
@@ -149,13 +150,11 @@ if user_id == "me":
 user = world.USERS[user_id]
 st.caption(f"Lives in {user['home_city']} · Travel card payments: {history(user)}")
 
-request = st.text_area("Your request", key="request", height=90,
-                       placeholder="Rome from 27 to 29 November, 1000 euros")
-
-used = st.session_state.get("used", 0)
-go = st.button("Find a trip", type="primary", disabled=not request.strip() or used >= MAX_REQUESTS)
-if used >= MAX_REQUESTS:
-    st.info("Request limit reached for this session.")
+# A new customer starts a new conversation
+if st.session_state.get("chat_user") != user_id:
+    st.session_state.chat = []
+    st.session_state.chat_user = user_id
+chat = st.session_state.setdefault("chat", [])
 
 def budget_from(request, travellers=1):
     """The budget in euros written in the request, or None. Only for the budget bar on the page."""
@@ -306,36 +305,21 @@ def last_text(transcript):
     return ""
 
 
-if go:
-    if not key:
-        st.error("No API key configured.")
-        st.stop()
-    st.session_state.used = used + 1
-    st.session_state.asked = request
-    with st.status("The agent is working...", expanded=True) as live:
-        try:
-            st.session_state.result = run_agent(
-                user_id, request, model=MODEL, system_prompt=PROMPTS[PROMPT], client=make_client(),
-                on_step=lambda name, args, res: live.write(step_line(name, args, res)))
-        except Exception as e:
-            st.session_state.result = None
-            live.update(label="Something went wrong", state="error")
-            st.error(f"Something went wrong: {e}")
-            st.stop()
-    st.rerun()  # redraw with the steps folded and the trip card on top
-
-
-result = st.session_state.get("result")
-if result:
+def show_answer(turn):
+    """The agent's side of one turn: steps, trip card, message."""
+    result = turn["result"]
     answer = result["answer"]
     steps = steps_from(result["transcript"])
-    with st.status(f"The agent worked in {len(steps)} steps, {result['seconds']} s", state="complete", expanded=False):
+    with st.status(f"Worked in {len(steps)} step{'s' if len(steps) != 1 else ''}, {result['seconds']} s", state="complete", expanded=False):
         for step in steps:
             st.write(step_line(*step))
+        if turn["sent"] != turn["text"]:
+            st.caption("The agent has no memory, so the page sent everything you wrote as one request:")
+            st.code(turn["sent"], language=None, wrap_lines=True)
     if answer:
         if answer.get("trip"):  # the card first: the answer at a glance, details in the text below
             trip_card(answer["trip"], answer["action"], answer.get("habits_used", []),
-                      budget_from(st.session_state.get("asked", ""), answer["trip"].get("travellers", 1)))
+                      budget_from(turn["sent"], answer["trip"].get("travellers", 1)))
         message = answer["message"]
         if language(message) == "ar":  # Arabic reads right to left
             st.markdown('<style>.rtl{text-align:right} .rtl ul,.rtl ol{padding-left:0;padding-right:1.5em}</style>'
@@ -346,5 +330,43 @@ if result:
         st.warning("The agent did not send its answer through the answer form (a known issue, about 5% of requests). "
                    "Its raw text is shown below.")
         st.markdown(last_text(result["transcript"]) or "_No text._")
-
     st.caption(f"{result['seconds']} s · ${result['cost_usd']:.4f} · model {MODEL}, prompt {PROMPT}")
+
+
+for turn in chat:
+    with st.chat_message("user"):
+        st.markdown(turn["text"])
+    with st.chat_message("assistant"):
+        show_answer(turn)
+
+if chat:
+    st.button("New trip", on_click=lambda: st.session_state.update(chat=[]))
+
+used = st.session_state.get("used", 0)
+if used >= MAX_REQUESTS:
+    st.info("Request limit reached for this session.")
+typed = st.chat_input("Reply to the agent..." if chat else "Ask for a trip, e.g. Rome from 27 to 29 November, 1000 euros",
+                      disabled=used >= MAX_REQUESTS)
+text = st.session_state.pop("pending", None) or typed
+
+if text:
+    if not key:
+        st.error("No API key configured.")
+        st.stop()
+    st.session_state.used = used + 1
+    # The agent reads one request and has no memory: send the customer's earlier messages along with the new one
+    sent = "\n".join([t["text"] for t in chat] + [text])
+    with st.chat_message("user"):
+        st.markdown(text)
+    with st.chat_message("assistant"):
+        with st.status("The agent is working...", expanded=True) as live:
+            try:
+                result = run_agent(
+                    user_id, sent, model=MODEL, system_prompt=PROMPTS[PROMPT], client=make_client(),
+                    on_step=lambda name, args, res: live.write(step_line(name, args, res)))
+            except Exception as e:
+                live.update(label="Something went wrong", state="error")
+                st.error(f"Something went wrong: {e}")
+                st.stop()
+    chat.append({"text": text, "sent": sent, "result": result})
+    st.rerun()  # redraw with the steps folded and the trip card on top
