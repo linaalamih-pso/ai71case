@@ -55,8 +55,11 @@ def secret(name):
 password = secret("APP_PASSWORD")
 if password and not st.session_state.get("unlocked"):
     st.title("✈️ Travel agent")
-    typed = st.text_input("Password", type="password")
-    if typed:
+    st.caption("A prototype travel assistant for a digital bank. Log in with the password you received.")
+    with st.form("login", border=True):
+        typed = st.text_input("Password", type="password")
+        logged_in = st.form_submit_button("Log in", type="primary", use_container_width=True)
+    if logged_in:
         if typed == password:
             st.session_state.unlocked = True
             st.rerun()
